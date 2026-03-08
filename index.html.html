@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>People Dynamics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --colerico: #C0392B;
+  --melancolico: #1A3A5C;
+  --sanguineo: #E67E22;
+  --fleumatico: #27AE60;
+  --bg: #F5F0E8;
+  --surface: #FDFAF4;
+  --text: #1C1C1C;
+  --muted: #7A7060;
+  --border: #DDD5C0;
+  --gold: #B8960C;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* HEADER */
+.header {
+  background:var(--text); color:var(--bg);
+  padding:16px 36px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100; border-bottom:3px solid var(--gold);
+}
+.header h1 { font-family:'Playfair Display',serif; font-size:1.25rem; letter-spacing:.02em; }
+.header .sub { font-size:.72rem; color:#B0A890; margin-top:2px; }
+.nav { display:flex; gap:6px; }
+.nav-btn {
+  padding:7px 16px; border-radius:4px; font-size:.8rem; font-weight:600;
+  cursor:pointer; border:1px solid #444; color:#CCC; background:transparent;
+  font-family:inherit; transition:all .2s;
+}
+.nav-btn.active { background:var(--gold); color:var(--text); border-color:var(--gold); }
+.nav-btn:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
+
+/* PAGES */
+.page { display:none; padding:36px 28px; max-width:940px; margin:0 auto; }
+.page.active { display:block; animation:fadeIn .35s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* TYPOGRAPHY */
+.page-title { font-family:'Playfair Display',serif; font-size:1.85rem; font-weight:900; margin-bottom:5px; }
+.page-desc { color:var(--muted); font-size:.88rem; margin-bottom:30px; line-height:1.6; }
+
+/* CARD */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px 28px; margin-bottom:20px; }
+.card-title { font-family:'Playfair Display',serif; font-size:1.05rem; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+
+/* ALERT */
+.alert { padding:11px 16px; border-radius:7px; font-size:.85rem; margin-bottom:18px; border-left:4px solid; display:none; }
+.alert.show { display:block; }
+.alert-success { background:#EDFBF1; border-color:var(--fleumatico); color:#1A5C35; }
+.alert-info    { background:#EEF4FF; border-color:#3B82F6; color:#1E3A8A; }
+
+/* ROLE */
+.role-row { display:flex; gap:12px; margin-bottom:16px; }
+.role-btn {
+  flex:1; padding:13px; border-radius:8px; border:2px solid var(--border);
+  background:white; cursor:pointer; text-align:center; transition:all .2s;
+}
+.role-btn .ri { font-size:1.4rem; display:block; margin-bottom:5px; }
+.role-btn .rl { font-size:.85rem; font-weight:700; }
+.role-btn .rs { font-size:.75rem; color:var(--muted); }
+.role-btn.sel { border-color:var(--gold); background:#FFF8E7; }
+
+/* FORM */
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.fg { margin-bottom:16px; }
+.fg label { display:block; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:6px; }
+.fi {
+  width:100%; padding:10px 13px; border:1.5px solid var(--border);
+  border-radius:7px; font-family:inherit; font-size:.9rem;
+  background:white; color:var(--text); transition:border-color .2s; outline:none;
+}
+.fi:focus { border-color:var(--gold); }
+textarea.fi { resize:vertical; min-height:82px; }
+
+/* WORDS */
+.ws-title {
+  font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+}
+.ws-title span.dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.ws-title span.line { flex:1; height:1px; background:var(--border); }
+.word-grid { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px; }
+.chip {
+  padding:6px 13px; border-radius:20px; border:1.5px solid var(--border);
+  font-size:.83rem; cursor:pointer; background:white; transition:all .15s;
+  user-select:none; font-family:inherit;
+}
+.chip:hover { transform:translateY(-1px); box-shadow:0 2px 7px rgba(0,0,0,.08); }
+.chip.sel-colerico    { background:var(--colerico);    color:white; border-color:var(--colerico); }
+.chip.sel-melancolico { background:var(--melancolico); color:white; border-color:var(--melancolico); }
+.chip.sel-sanguineo   { background:var(--sanguineo);   color:white; border-color:var(--sanguineo); }
+.chip.sel-fleumatico  { background:var(--fleumatico);  color:white; border-color:var(--fleumatico); }
+
+/* BARS */
+.bars { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.bar-row { }
+.bar-label { display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:4px; }
+.bar-track { height:7px; background:#EDE8DC; border-radius:4px; overflow:hidden; }
+.bar-fill  { height:100%; border-radius:4px; transition:width .4s; }
+
+/* TALENT GRID */
+.talent-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.talent-card { background:white; border-radius:10px; padding:18px; border:1.5px solid var(--border); }
+.tc-icon  { font-size:1.3rem; margin-bottom:8px; }
+.tc-title { font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+.tc-desc  { font-size:.77rem; color:var(--muted); margin-bottom:10px; line-height:1.5; }
+
+/* BUTTONS */
+.btn-row { display:flex; gap:12px; margin-top:22px; }
+.btn {
+  padding:12px 26px; border-radius:7px; font-family:inherit;
+  font-size:.9rem; font-weight:700; cursor:pointer; border:none; transition:all .2s;
+}
+.btn-dark    { background:var(--text); color:var(--bg); }
+.btn-dark:hover { background:#333; transform:translateY(-1px); }
+.btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--text); }
+.btn-outline:hover { border-color:var(--text); }
+
+/* STATS */
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:20px; }
+.stat { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
+.stat-num   { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:900; }
+.stat-label { font-size:.75rem; color:var(--muted); margin-top:3px; }
+
+/* LEGEND */
+.legend { }
+.legend-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:.85rem; }
+.ldot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+.lbar-track { flex:1; height:6px; background:#EDE8DC; border-radius:3px; overflow:hidden; }
+.lbar-fill  { height:100%; border-radius:3px; transition:width .5s; }
+.lcount { font-weight:700; min-width:22px; text-align:right; }
+
+/* TABLE */
+.tbl { width:100%; border-collapse:collapse; font-size:.85rem; }
+.tbl th {
+  text-align:left; padding:9px 12px; font-size:.72rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
+  border-bottom:2px solid var(--border); background:#F0EBE0;
+}
+.tbl td { padding:11px 12px; border-bottom:1px solid #EDE8DC; vertical-align:middle; }
+.tbl tr:hover td { background:#FAF6EE; }
+
+/* BADGE */
+.badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 10px; border-radius:12px; font-size:.75rem; font-weight:700; color:white;
+}
+.badge.colerico    { background:var(--colerico); }
+.badge.melancolico { background:var(--melancolico); }
+.badge.sanguineo   { background:var(--sanguineo); }
+.badge.fleumatico  { background:var(--fleumatico); }
+
+/* CORR */
+.corr-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.corr-card {
+  background:white; border-radius:10px; padding:18px;
+  border:1px solid var(--border); border-top:4px solid #ccc;
+}
+.corr-top  { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:9px; }
+.corr-tipo { margin-left:auto; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+.corr-title{ font-weight:700; font-size:.88rem; margin-bottom:5px; }
+.corr-desc { font-size:.8rem; color:#555; line-height:1.6; }
+.corr-tag  { margin-top:8px; font-size:.77rem; padding:7px 10px; border-radius:6px; }
+.tag-alergia{ background:#FFF8E7; }
+.tag-tarefa { background:#EDFBF1; }
+
+/* MODAL */
+.modal-bg {
+  position:fixed; inset:0; background:rgba(0,0,0,.5);
+  z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-bg.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:14px; padding:28px;
+  max-width:500px; width:100%; max-height:85vh; overflow-y:auto;
+}
+.modal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+.modal-name { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:900; }
+.modal-meta { font-size:.77rem; color:var(--muted); margin-top:3px; }
+.modal-close { border:none; background:none; font-size:1.3rem; cursor:pointer; color:var(--muted); }
+.detail-block { background:white; border-radius:8px; padding:12px 14px; margin-bottom:10px; border:1px solid var(--border); }
+.detail-label { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
+.detail-val   { font-size:.85rem; line-height:1.6; }
+
+/* EMPTY */
+.empty { text-align:center; padding:50px 20px; color:var(--muted); }
+.empty-icon { font-size:2.5rem; margin-bottom:12px; }
+.empty p { font-size:.88rem; line-height:1.6; }
+
+/* STORAGE INFO */
+.storage-banner {
+  background:#1A3A5C; color:white; text-align:center;
+  padding:7px; font-size:.78rem;
+}
+.storage-banner span { opacity:.8; }
+
+/* ── MAPA MENTAL ── */
+.mapa-bloco { margin-bottom: 40px; }
+.mapa-lider-node {
+  display: inline-flex; flex-direction: column; align-items: center;
+  padding: 18px 28px; border-radius: 16px;
+  background: var(--text); color: var(--bg);
+  box-shadow: 0 4px 20px rgba(0,0,0,.18);
+  min-width: 200px; text-align: center; position: relative; z-index: 2;
+}
+.mapa-lider-node .mn-nome { font-family: 'Playfair Display', serif; font-size: 1.08rem; font-weight: 700; }
+.mapa-lider-node .mn-cargo { font-size: .72rem; opacity: .7; margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+.mapa-lider-node .mn-badges { display: flex; gap: 6px; margin-top: 10px; justify-content: center; flex-wrap: wrap; }
+.mapa-lider-node .mn-badge { font-size: .68rem; padding: 2px 9px; border-radius: 8px; font-weight: 700; }
+.mapa-connector-wrap {
+  display: flex; justify-content: center; padding: 0 0 0 0;
+  position: relative;
+}
+.mapa-connector-wrap::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  width: 2px; height: 28px; background: #C8BEA8;
+}
+.mapa-liderados-row {
+  display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+  padding-top: 28px; position: relative;
+}
+.mapa-liderados-row::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%;
+  height: 2px; background: #C8BEA8;
+}
+.mapa-liderado-col {
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+.mapa-liderado-col::before {
+  content: ''; position: absolute; top: -28px; left: 50%;
+  width: 2px; height: 28px; background: #C8BEA8;
+}
+.mapa-liderado-node {
+  padding: 14px 18px; border-radius: 12px;
+  background: white; border: 2px solid var(--border);
+  min-width: 150px; max-width: 190px; text-align: center;
+  cursor: pointer; transition: all .2s; position: relative;
+}
+.mapa-liderado-node:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+.mapa-liderado-node.expanded { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184,150,12,.18); }
+.mapa-liderado-node .mln-nome { font-weight: 700; font-size: .88rem; color: var(--text); }
+.mapa-liderado-node .mln-cargo { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.mapa-liderado-node .mln-badges { display: flex; gap: 4px; margin-top: 8px; justify-content: center; flex-wrap: wrap; }
+.mapa-detail-panel {
+  margin-top: 10px; border-radius: 12px; border: 2px solid var(--gold);
+  background: white; width: 100%; max-width: 340px; overflow: hidden;
+  animation: slideDown .25s ease;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+}
+@keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+.mapa-detail-panel .mdp-header {
+  background: var(--text); color: var(--bg);
+  padding: 10px 14px; font-size: .78rem; font-weight: 700;
+}
+.mapa-detail-panel .mdp-body { padding: 14px; font-size: .8rem; line-height: 1.55; }
+.mapa-detail-panel .mdp-section { margin-bottom: 12px; }
+.mapa-detail-panel .mdp-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+.mapa-empty { text-align: center; padding: 60px 24px; color: var(--muted); }
+.mapa-empty .me-icon { font-size: 3rem; margin-bottom: 12px; }
+
+@media(max-width:680px) {
+  .mapa-liderados-row::before { display: none; }
+  .mapa-liderado-col::before { display: none; }
+  .mapa-connector-wrap::before { display: none; }
+}
+
+@media(max-width:680px){
+  .form-row,.talent-grid,.bars,.stats,.corr-grid{ grid-template-columns:1fr; }
+  .page { padding:20px 16px; }
+  .stats { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="storage-banner">
+  ☁️ <span>People Dynamics AI · Dados sincronizados na nuvem</span>
+  &nbsp;|&nbsp;
+  <span id="sync-status"></span>
+  &nbsp;|&nbsp;
+  <button onclick="exportarJSON()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:.75rem;font-family:inherit;">⬇ Exportar backup</button>
+</div>
+
+<header class="header">
+  <div style="display:flex;align-items:center;gap:18px">
+    <div id="logo-wrap">
+      <img src="data:image/png;base64,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" alt="Suzano" style="height:85px;object-fit:contain;">
+    </div>
+    <div style="width:1px;height:34px;background:rgba(255,255,255,.15)"></div>
+    <div>
+      <h1>People Dynamics AI</h1>
+      <div class="sub">Temperamentos · Talentos · Correlações</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('cadastro',this)">✏️ Funcionários</button>
+    <button class="nav-btn" onclick="showPage('lideres',this)">🎯 Líderes</button>
+    <button class="nav-btn" onclick="showPage('mapa',this)">🗺️ Mapa</button>
+    <button class="nav-btn" onclick="showPage('candidatos',this)">🔍 Seleção</button>
+    <button class="nav-btn" onclick="showPage('painel',this)">📊 Painel</button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════ LÍDERES ════════════════════════════ -->
+<div class="page" id="page-lideres">
+  <div class="page-title">Cadastro de Líderes</div>
+  <p class="page-desc">Registre os líderes da organização previamente. Depois, cada um pode fazer o diagnóstico completo de temperamento e talentos.</p>
+
+  <div id="alerta-lider" class="alert"></div>
+
+  <div class="card">
+    <div class="card-title">➕ Novo Líder</div>
+    <div class="form-row">
+      <div class="fg"><label>Nome completo</label><input class="fi" id="fl-nome" placeholder="Ex: Carlos Eduardo Santos"></div>
+      <div class="fg">
+        <label>Cargo / Função</label>
+        <select class="fi" id="fl-cargo">
+          <option value="">— Selecione o cargo —</option>
+          <option>Diretor</option>
+          <option>Gerente Executivo</option>
+          <option>Gerente</option>
+          <option>Coordenador</option>
+          <option>Supervisor</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Área / Setor</label>
+        <select class="fi" id="fl-area">
+          <option value="">— Selecione a área —</option>
+          <option>Manutenção</option>
+          <option>Colheita</option>
+          <option>Silvicultura</option>
+          <option>Logística</option>
+          <option>Viveiro</option>
+          <option>Operações</option>
+          <option>Gente e Gestão</option>
+          <option>Segurança do Trabalho</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SUPERIOR CHOICE -->
+    <div class="fg">
+      <label>Possui superior hierárquico?</label>
+      <div class="role-row" style="margin-bottom:0">
+        <div class="role-btn" id="sup-nao" onclick="selSuperior(false)" style="flex:none;width:160px">
+          <span class="ri">🏆</span>
+          <div class="rl">Sem superior</div>
+          <div class="rs">Topo da hierarquia</div>
+        </div>
+        <div class="role-btn" id="sup-sim" onclick="selSuperior(true)" style="flex:none;width:160px">
+          <span class="ri">🔗</span>
+          <div class="rl">Tem superior</div>
+          <div class="rs">Vinculado a um líder</div>
+        </div>
+      </div>
+    </div>
+    <div id="fl-superior-wrap" style="display:none" class="fg">
+      <label>Selecione o superior</label>
+      <select class="fi" id="fl-superior">
+        <option value="">— Selecione o superior —</option>
+        <optgroup label="👤 Líderes da Organização">
+          <option>Rodrigo Zagonel</option>
+          <option>Catia Falcao</option>
+          <option>Paulo Vinicio</option>
+          <option>Gustavo Costa</option>
+          <option>Rafael Magno</option>
+          <option>Gustavo Vianna</option>
+          <option>Adriano Rodrigues</option>
+          <option>Filipe Fuchs</option>
+          <option>Guilherme Cristo</option>
+          <option>Raul Aragão</option>
+          <option>Patricia de Oliveira</option>
+          <option>Alberto de Oliveira</option>
+          <option>Mario Rodolfo</option>
+          <option>Magno Alves</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-dark" onclick="salvarLider()">➕ Adicionar Líder</button>
+      <button class="btn btn-outline" onclick="limparLider()">↩ Limpar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Líderes Cadastrados</div>
+    <div id="lideres-lista"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ CADASTRO ═══════════════════════════ -->
+<div class="page active" id="page-cadastro">
+  <div class="page-title">Cadastro de Participante</div>
+  <p class="page-desc">Preencha os dados, selecione as palavras que mais o identificam e reflita sobre seus talentos e tarefas de desenvolvimento.</p>
+
+  <div id="alerta" class="alert"></div>
+
+  <!-- IDENTIFICAÇÃO -->
+  <div class="card">
+    <div class="card-title">👤 Identificação</div>
+    <div class="form-row">
+      <div class="fg"><label>Nome completo</label><input class="fi" id="f-nome" placeholder="Ex: Ana Paula Silva"></div>
+      <div class="fg">
+        <label>Cargo / Função</label>
+        <select class="fi" id="f-cargo">
+          <option value="">— Selecione o cargo —</option>
+          <option>Diretor</option>
+          <option>Gerente Executivo</option>
+          <option>Gerente</option>
+          <option>Coordenador</option>
+          <option>Supervisor</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Área / Setor</label>
+        <select class="fi" id="f-area">
+          <option value="">— Selecione a área —</option>
+          <option>Manutenção</option>
+          <option>Colheita</option>
+          <option>Silvicultura</option>
+          <option>Logística</option>
+          <option>Viveiro</option>
+          <option>Operações</option>
+          <option>Gente e Gestão</option>
+          <option>Segurança do Trabalho</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Função na equipe</label>
+        <div class="role-row" style="margin-bottom:0">
+          <div class="role-btn" onclick="selRole(this,'lider')">
+            <span class="ri">🎯</span><div class="rl">Líder</div><div class="rs">Gestor de pessoas</div>
+          </div>
+          <div class="role-btn" onclick="selRole(this,'liderado')">
+            <span class="ri">🌱</span><div class="rl">Liderado</div><div class="rs">Membro da equipe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LÍDER DIRETO -->
+    <div style="background:#F5F0E8;border-radius:10px;padding:16px 18px;margin-top:4px">
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px">🔗 Líder Direto</div>
+      <div class="form-row" style="margin-bottom:8px">
+        <div class="fg" style="margin-bottom:0">
+          <label>Nome do líder</label>
+          <select class="fi" id="f-lider"><option value="">— Sem líder vinculado (topo) —</option></select>
+        </div>
+        <div class="fg" style="margin-bottom:0">
+          <label>Cargo do líder</label>
+          <select class="fi" id="f-lider-cargo" disabled>
+            <option value="">— Selecione o líder primeiro —</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label>Função do líder</label>
+        <div style="display:flex;gap:10px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.88rem;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;background:white;transition:all .2s" id="fl-func-lider">
+            <input type="radio" name="lider-func" value="lider" onchange="setLiderFuncao('lider')" style="accent-color:var(--gold)"> 🎯 Líder
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.88rem;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;background:white;transition:all .2s">
+            <input type="radio" name="lider-func" value="liderado" onchange="setLiderFuncao('liderado')" style="accent-color:var(--gold)"> 🌱 Liderado
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.88rem;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;background:white;transition:all .2s">
+            <input type="radio" name="lider-func" value="" onchange="setLiderFuncao('')" style="accent-color:var(--gold)" checked> Não sei / N/A
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGNÓSTICO TABS: Temperamento | DISC -->
+  <div class="card" style="padding-bottom:0">
+    <!-- Tab switcher -->
+    <div style="display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--border)">
+      <button id="tab-btn-temp" onclick="switchDiagTab('temp')"
+        style="flex:1;padding:13px 16px;font-family:inherit;font-size:.88rem;font-weight:700;border:none;
+        background:var(--text);color:var(--bg);cursor:pointer;border-radius:0;transition:all .2s;
+        border-bottom:3px solid var(--gold)">
+        🧠 Temperamento — Essência
+      </button>
+      <button id="tab-btn-disc" onclick="switchDiagTab('disc')"
+        style="flex:1;padding:13px 16px;font-family:inherit;font-size:.88rem;font-weight:700;border:none;
+        background:#F0EBE0;color:var(--muted);cursor:pointer;border-radius:0;transition:all .2s;
+        border-bottom:3px solid transparent">
+        🧩 DISC — Comportamento
+      </button>
+    </div>
+
+    <!-- TEMPERAMENTO PANEL -->
+    <div id="tab-panel-temp" style="padding:20px 0 4px">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:18px;line-height:1.5">
+        O temperamento revela sua <strong>essência</strong> — quem você é por natureza, independente do ambiente. Em cada linha, escolha <strong>apenas uma palavra</strong>.
+      </p>
+      <div id="words-area"></div>
+      <div class="bars" id="bars-area" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="grid-column:1/-1;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Resultado — Temperamento</div>
+        <div class="bar-row">
+          <div class="bar-label"><span style="font-weight:600;color:var(--colerico)">● A — Colérico</span><span id="pct-colerico" style="color:var(--colerico);font-weight:700">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-colerico" style="background:var(--colerico);width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cnt-colerico">0 escolhas</span> de 15</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span style="font-weight:600;color:var(--melancolico)">● B — Melancólico</span><span id="pct-melancolico" style="color:var(--melancolico);font-weight:700">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-melancolico" style="background:var(--melancolico);width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cnt-melancolico">0 escolhas</span> de 15</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span style="font-weight:600;color:var(--sanguineo)">● C — Sanguíneo</span><span id="pct-sanguineo" style="color:var(--sanguineo);font-weight:700">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-sanguineo" style="background:var(--sanguineo);width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cnt-sanguineo">0 escolhas</span> de 15</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span style="font-weight:600;color:var(--fleumatico)">● D — Fleumático</span><span id="pct-fleumatico" style="color:var(--fleumatico);font-weight:700">0%</span></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-fleumatico" style="background:var(--fleumatico);width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cnt-fleumatico">0 escolhas</span> de 15</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+        <button onclick="switchDiagTab('disc')" class="btn btn-outline" style="width:100%">Avançar para DISC →</button>
+      </div>
+    </div>
+
+    <!-- DISC PANEL -->
+    <div id="tab-panel-disc" style="display:none;padding:20px 0 4px">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
+        O DISC revela seu <strong>comportamento observável</strong> — como você age e reage no dia a dia profissional. Em cada linha, escolha <strong>apenas uma palavra</strong>.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#FDECEA;color:#C0392B;font-weight:700">D — Dominância</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#FFF3CD;color:#856404;font-weight:700">I — Influência</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#EDFBF1;color:#1A5C35;font-weight:700">S — Estabilidade</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#EEF4FF;color:#1E3A8A;font-weight:700">C — Conformidade</span>
+      </div>
+      <div id="disc-words-area"></div>
+      <div id="disc-bars-area" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Resultado — DISC</div>
+        <div class="bars">
+          <div class="bar-row">
+            <div class="bar-label"><span style="font-weight:600;color:#C0392B">● D — Dominância</span><span id="disc-pct-D" style="color:#C0392B;font-weight:700">0%</span></div>
+            <div class="bar-track"><div class="bar-fill" id="disc-bar-D" style="background:#C0392B;width:0%"></div></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="disc-cnt-D">0 escolhas</span> de 15</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span style="font-weight:600;color:#E6AC00">● I — Influência</span><span id="disc-pct-I" style="color:#E6AC00;font-weight:700">0%</span></div>
+            <div class="bar-track"><div class="bar-fill" id="disc-bar-I" style="background:#E6AC00;width:0%"></div></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="disc-cnt-I">0 escolhas</span> de 15</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span style="font-weight:600;color:#27AE60">● S — Estabilidade</span><span id="disc-pct-S" style="color:#27AE60;font-weight:700">0%</span></div>
+            <div class="bar-track"><div class="bar-fill" id="disc-bar-S" style="background:#27AE60;width:0%"></div></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="disc-cnt-S">0 escolhas</span> de 15</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span style="font-weight:600;color:#1A3A5C">● C — Conformidade</span><span id="disc-pct-C" style="color:#1A3A5C;font-weight:700">0%</span></div>
+            <div class="bar-track"><div class="bar-fill" id="disc-bar-C" style="background:#1A3A5C;width:0%"></div></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="disc-cnt-C">0 escolhas</span> de 15</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+        <button onclick="switchDiagTab('temp')" class="btn btn-outline">← Voltar para Temperamento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TALENTOS -->
+  <div class="card">
+    <div class="card-title">✨ Talentos & Tarefas</div>
+    <div class="talent-grid">
+      <div class="talent-card">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-title">Talento</div>
+        <div class="tc-desc">O que sempre foi fácil? O que você faz naturalmente e outros acham difícil?</div>
+        <textarea class="fi" id="f-talento" placeholder="Ex: Consigo organizar processos complexos com facilidade..."></textarea>
+      </div>
+      <div class="talent-card">
+        <div class="tc-icon">🪞</div>
+        <div class="tc-title">Caricatura</div>
+        <div class="tc-desc">Como os outros te veem? Qual comportamento seu é mais percebido pelo grupo?</div>
+        <textarea class="fi" id="f-caricatura" placeholder="Ex: As pessoas me veem como alguém muito detalhista..."></textarea>
+      </div>
+      <div class="talent-card">
+        <div class="tc-icon">😤</div>
+        <div class="tc-title">Alergia</div>
+        <div class="tc-desc">O que você não suporta no outro? O que te irrita profundamente?</div>
+        <textarea class="fi" id="f-alergia" placeholder="Ex: Não suporto pessoas desorganizadas..."></textarea>
+      </div>
+      <div class="talent-card">
+        <div class="tc-icon">🎯</div>
+        <div class="tc-title">Tarefa</div>
+        <div class="tc-desc">O que você pode fazer para se desenvolver e equilibrar esse cenário?</div>
+        <textarea class="fi" id="f-tarefa" placeholder="Ex: Praticar a escuta ativa antes de dar feedback..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-dark" onclick="salvar()">💾 Salvar Participante</button>
+    <button class="btn btn-outline" onclick="limpar()">↩ Limpar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAINEL ════════════════════════════ -->
+<div class="page" id="page-painel">
+  <div class="page-title">Painel da Equipe</div>
+  <p class="page-desc">Visão consolidada de temperamentos, talentos e correlações em tempo real.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="card">
+    <div class="card-title">📊 Distribuição de Temperamentos</div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 Participantes Cadastrados</div>
+    <div id="table-wrap"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 Correlações Líder × Liderado</div>
+    <div id="corr-wrap"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MAPA MENTAL ══════════════════════════ -->
+<div class="page" id="page-mapa">
+  <div class="page-title">Mapa Mental das Equipes</div>
+  <p class="page-desc">Cada líder com diagnóstico tem seu próprio mapa. Clique em qualquer liderado para ver perfil, correlação com o líder e recomendações.</p>
+  <div id="mapa-wrap"></div>
+</div>
+
+<!-- ═══════════════════════════════════ CANDIDATOS ════════════════════════ -->
+<div class="page" id="page-candidatos">
+  <div class="page-title">Seleção de Candidatos</div>
+  <p class="page-desc">Gerencie candidatos em processo seletivo. Gere um link exclusivo para o candidato preencher o DISC — ele não acessa dados internos.</p>
+
+  <div id="alerta-cand" class="alert"></div>
+
+  <div class="card">
+    <div class="card-title">🔗 Link Exclusivo para Candidato</div>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.5">
+      O candidato abre este link, preenche o DISC e salva. Os dados aparecem automaticamente na tabela abaixo, sem que ele tenha acesso ao painel interno.
+    </p>
+    <div style="background:#F0EBE0;border-radius:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:.82rem;font-weight:600;color:var(--muted);min-width:80px">Link DISC:</div>
+      <code id="link-candidato" style="flex:1;font-size:.8rem;color:var(--text);word-break:break-all;background:white;padding:8px 12px;border-radius:6px;border:1px solid var(--border)">— configure JSONBin para gerar o link —</code>
+      <button onclick="copiarLink()" class="btn btn-dark" style="padding:7px 16px;white-space:nowrap">📋 Copiar link</button>
+    </div>
+    <p style="font-size:.76rem;color:var(--muted);margin-top:10px">
+      💡 Para gerar QR Code: acesse <strong>qr.io</strong>, cole o link acima e imprima para entregar ao candidato.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Candidatos Avaliados</div>
+    <div id="cand-lista"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FORM CANDIDATO (link exclusivo) ══════ -->
+<div class="page" id="page-form-candidato" style="max-width:760px">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+    <div class="page-title">Diagnóstico de Comportamento</div>
+    <p class="page-desc">Bem-vindo(a)! Este formulário é parte do processo seletivo. Responda com honestidade — não há resposta certa ou errada. Leva cerca de 5 minutos.</p>
+  </div>
+  <div id="alerta-cand-form" class="alert"></div>
+  <div id="cand-form-wrap">
+    <div class="card">
+      <div class="card-title">👤 Seus Dados</div>
+      <div class="form-row">
+        <div class="fg"><label>Nome completo</label><input class="fi" id="fc-nome" placeholder="Seu nome completo"></div>
+        <div class="fg">
+          <label>Cargo pretendido</label>
+          <select class="fi" id="fc-cargo">
+            <option value="">— Selecione —</option>
+            <option>Diretor</option><option>Gerente Executivo</option><option>Gerente</option>
+            <option>Coordenador</option><option>Supervisor</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Área de interesse</label>
+        <select class="fi" id="fc-area">
+          <option value="">— Selecione —</option>
+          <option>Manutenção</option><option>Colheita</option><option>Silvicultura</option>
+          <option>Logística</option><option>Viveiro</option><option>Operações</option>
+          <option>Gente e Gestão</option><option>Segurança do Trabalho</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧩 DISC — Como você age no trabalho</div>
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px;line-height:1.5">Em cada linha, escolha <strong>apenas uma palavra</strong> — a que melhor descreve como você se comporta naturalmente no ambiente profissional.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#FDECEA;color:#C0392B;font-weight:700">D — Dominância</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#FFF3CD;color:#856404;font-weight:700">I — Influência</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#EDFBF1;color:#1A5C35;font-weight:700">S — Estabilidade</span>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:10px;background:#EEF4FF;color:#1E3A8A;font-weight:700">C — Conformidade</span>
+      </div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.88rem">
+        <thead><tr style="background:#F0EBE0">
+          <th style="padding:10px 8px;text-align:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--border);width:36px">#</th>
+          <th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;color:#C0392B;border-bottom:2px solid #C0392B;border-left:1px solid var(--border)">● D — Dominância</th>
+          <th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;color:#E6AC00;border-bottom:2px solid #E6AC00;border-left:1px solid var(--border)">● I — Influência</th>
+          <th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;color:#27AE60;border-bottom:2px solid #27AE60;border-left:1px solid var(--border)">● S — Estabilidade</th>
+          <th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;color:#1A3A5C;border-bottom:2px solid #1A3A5C;border-left:1px solid var(--border)">● C — Conformidade</th>
+        </tr></thead>
+        <tbody id="disc-cand-body"></tbody>
+      </table></div>
+      <div id="disc-cand-bars" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Seu perfil até agora</div>
+        <div class="bars">
+          <div class="bar-row"><div class="bar-label"><span style="font-weight:600;color:#C0392B">● D</span><span id="cand-pct-D" style="color:#C0392B;font-weight:700">0%</span></div><div class="bar-track"><div class="bar-fill" id="cand-bar-D" style="background:#C0392B;width:0%"></div></div><div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cand-cnt-D">0</span> de 15</div></div>
+          <div class="bar-row"><div class="bar-label"><span style="font-weight:600;color:#E6AC00">● I</span><span id="cand-pct-I" style="color:#E6AC00;font-weight:700">0%</span></div><div class="bar-track"><div class="bar-fill" id="cand-bar-I" style="background:#E6AC00;width:0%"></div></div><div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cand-cnt-I">0</span> de 15</div></div>
+          <div class="bar-row"><div class="bar-label"><span style="font-weight:600;color:#27AE60">● S</span><span id="cand-pct-S" style="color:#27AE60;font-weight:700">0%</span></div><div class="bar-track"><div class="bar-fill" id="cand-bar-S" style="background:#27AE60;width:0%"></div></div><div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cand-cnt-S">0</span> de 15</div></div>
+          <div class="bar-row"><div class="bar-label"><span style="font-weight:600;color:#1A3A5C">● C</span><span id="cand-pct-C" style="color:#1A3A5C;font-weight:700">0%</span></div><div class="bar-track"><div class="bar-fill" id="cand-bar-C" style="background:#1A3A5C;width:0%"></div></div><div style="font-size:.75rem;color:var(--muted);margin-top:2px"><span id="cand-cnt-C">0</span> de 15</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-dark" onclick="salvarCandidato()">✅ Enviar diagnóstico</button>
+    </div>
+  </div>
+  <div id="cand-obrigado" style="display:none;text-align:center;padding:48px 24px">
+    <div style="font-size:3rem;margin-bottom:16px">✅</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:10px">Diagnóstico enviado!</div>
+    <p style="color:var(--muted);font-size:.92rem;line-height:1.6">Obrigado(a) pela participação. Suas respostas foram salvas com segurança.<br>Você pode fechar esta janela.</p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="fecharModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <div class="modal-name" id="m-nome"></div>
+        <div class="modal-meta" id="m-meta"></div>
+      </div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div id="m-body"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════ DATA ═════════════════════════════════════════
+// 15 linhas × 4 colunas: cada linha = [colerico, melancolico, sanguineo, fleumatico]
+const WORD_ROWS = [
+  ['Decidido',      'Perfeccionista', 'Entusiasmado',  'Paciente'    ],
+  ['Objetivo',      'Analítico',      'Comunicativo',  'Calmo'       ],
+  ['Dominante',     'Detalhista',     'Criativo',      'Diplomático' ],
+  ['Determinado',   'Organizado',     'Otimista',      'Conciliador' ],
+  ['Direto',        'Criterioso',     'Espontâneo',    'Equilibrado' ],
+  ['Corajoso',      'Sensível',       'Carismático',   'Estável'     ],
+  ['Independente',  'Reflexivo',      'Sociável',      'Confiável'   ],
+  ['Competitivo',   'Profundo',       'Expressivo',    'Tolerante'   ],
+  ['Produtivo',     'Metódico',       'Animado',       'Mediador'    ],
+  ['Eficiente',     'Preciso',        'Inspirador',    'Constante'   ],
+  ['Ousado',        'Cuidadoso',      'Divertido',     'Sereno'      ],
+  ['Exigente',      'Sistemático',    'Persuasivo',    'Adaptável'   ],
+  ['Focado',        'Disciplinado',   'Afetivo',       'Leal'        ],
+  ['Confiante',     'Idealista',      'Colaborativo',  'Consistente' ],
+  ['Ambicioso',     'Cauteloso',      'Empático',      'Apoiador'    ],
+];
+// keep WORDS for score calculation (15 words each)
+const WORDS = {
+  colerico:    WORD_ROWS.map(r=>r[0]),
+  melancolico: WORD_ROWS.map(r=>r[1]),
+  sanguineo:   WORD_ROWS.map(r=>r[2]),
+  fleumatico:  WORD_ROWS.map(r=>r[3]),
+};
+const LABELS  = { colerico:'Colérico', melancolico:'Melancólico', sanguineo:'Sanguíneo', fleumatico:'Fleumático' };
+const COLORS  = { colerico:'#C0392B',  melancolico:'#1A3A5C',    sanguineo:'#E67E22',   fleumatico:'#27AE60' };
+const GRUPOS  = ['A','B','C','D'];
+const TEMPS   = ['colerico','melancolico','sanguineo','fleumatico'];
+
+const CORR = {
+  'colerico-colerico':       {tipo:'tension',    cor:'#C0392B', tl:'Força × Força',          desc:'Dois coléricos criam energia e resultados, mas podem gerar conflitos de poder. O desafio é ceder espaço e escutar antes de agir.'},
+  'colerico-melancolico':    {tipo:'complement', cor:'#1A3A5C', tl:'Visão × Precisão',        desc:'O colérico traz velocidade e decisão; o melancólico traz análise e qualidade. O risco é o colérico atropelar o ritmo do melancólico.'},
+  'colerico-sanguineo':      {tipo:'harmony',    cor:'#27AE60', tl:'Ação × Energia',           desc:'Dupla animada e produtiva. Ambos são extrovertidos e orientados a resultados. O desafio é manter o foco e não se dispersar.'},
+  'colerico-fleumatico':     {tipo:'complement', cor:'#1A3A5C', tl:'Direção × Estabilidade',  desc:'O colérico decide, o fleumático sustenta. Boa relação quando há respeito mútuo. O colérico não deve impor ritmo acelerado demais.'},
+  'melancolico-melancolico': {tipo:'harmony',    cor:'#27AE60', tl:'Profundidade × Exatidão',  desc:'Equipe altamente qualificada e rigorosa. O risco é a paralisia por análise ou dificuldade de decidir rapidamente.'},
+  'melancolico-sanguineo':   {tipo:'tension',    cor:'#C0392B', tl:'Detalhe × Improviso',      desc:'Temperamentos opostos que se complementam com respeito mútuo. O sanguíneo anima o melancólico; o melancólico ancora o sanguíneo.'},
+  'melancolico-fleumatico':  {tipo:'harmony',    cor:'#27AE60', tl:'Qualidade × Constância',   desc:'Parceria estável e confiável. Ambos são reflexivos e estruturados. Podem precisar de impulso externo para sair da zona de conforto.'},
+  'sanguineo-sanguineo':     {tipo:'tension',    cor:'#C0392B', tl:'Energia × Dispersão',      desc:'Ambiente cheio de criatividade, mas com risco de falta de foco. Precisam de estrutura e acompanhamento de metas.'},
+  'sanguineo-fleumatico':    {tipo:'complement', cor:'#1A3A5C', tl:'Entusiasmo × Paz',          desc:'O sanguíneo traz movimento e ideias; o fleumático traz estabilidade. Combinação agradável que tende a funcionar bem.'},
+  'fleumatico-fleumatico':   {tipo:'neutral',    cor:'#E67E22', tl:'Harmonia × Estagnação',    desc:'Equipe pacífica, mas pode ter dificuldade para tomar decisões difíceis ou enfrentar conflitos necessários ao crescimento.'},
+};
+const TIPO_LABELS = {harmony:'Harmonia', tension:'Tensão', complement:'Complemento', neutral:'Neutro'};
+
+// ══════════════════════════════ STATE ════════════════════════════════════════
+const STORAGE_KEY = 'lideranca_v2';
+let participants = [];
+let selectedRole = null;
+// rowSelections[i] = 'colerico'|'melancolico'|'sanguineo'|'fleumatico'|null
+let rowSelections = new Array(15).fill(null);
+let hasStarted = false; // track if user made any selection (to show bars)
+
+// ══════════════════════════════ CLOUD STORAGE (JSONBin.io) ══════════════════
+// 1. Acesse https://jsonbin.io → crie conta gratuita
+// 2. Crie um BIN com conteúdo inicial: {"participants":[],"lideres":[]}
+// 3. Cole o BIN ID e a Master Key abaixo
+const JSONBIN_ID  = 'SEU_BIN_ID_AQUI';        // ex: 6650f3c3ad19ca34f87a1234
+const JSONBIN_KEY = 'SUA_MASTER_KEY_AQUI';     // ex: $2a$10$abc...
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+let _saving = false;
+let _pendingSave = false;
+
+async function loadData() {
+  showSyncStatus('carregando');
+  try {
+    const r = await fetch(JSONBIN_URL+'/latest', {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const json = await r.json();
+    const rec = json.record || {};
+    participants       = Array.isArray(rec.participants) ? rec.participants : [];
+    lideresCadastrados = Array.isArray(rec.lideres)      ? rec.lideres      : [];
+    showSyncStatus('ok');
+  } catch(e) {
+    showSyncStatus('erro');
+    // fallback to localStorage while offline
+    try {
+      const raw = localStorage.getItem('pda_fallback');
+      if (raw) { const d = JSON.parse(raw); participants = d.participants||[]; lideresCadastrados = d.lideres||[]; }
+    } catch(_) {}
+  }
+}
+
+async function saveData() {
+  // debounce: if already saving, queue one more
+  if (_saving) { _pendingSave = true; return; }
+  _saving = true;
+  showSyncStatus('salvando');
+  const payload = { participants, lideres: lideresCadastrados };
+  // always persist locally as fallback
+  try { localStorage.setItem('pda_fallback', JSON.stringify(payload)); } catch(_) {}
+  try {
+    const r = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    showSyncStatus('ok');
+  } catch(e) {
+    showSyncStatus('erro');
+  }
+  _saving = false;
+  if (_pendingSave) { _pendingSave = false; saveData(); }
+}
+
+// alias so existing calls to saveLideres() also sync
+function saveLideres() { saveData(); }
+
+function showSyncStatus(state) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const cfg = {
+    carregando: { icon:'⏳', txt:'Sincronizando dados...', bg:'#EEF4FF', col:'#1E3A8A' },
+    salvando:   { icon:'💾', txt:'Salvando na nuvem...',   bg:'#FFF8E7', col:'#92700A' },
+    ok:         { icon:'✅', txt:'Dados sincronizados',    bg:'#EDFBF1', col:'#1A5C35' },
+    erro:       { icon:'⚠️', txt:'Sem conexão — dados salvos localmente', bg:'#FFF0F0', col:'#8B1A1A' },
+  };
+  const c = cfg[state];
+  el.style.cssText = `display:inline-flex;align-items:center;gap:6px;font-size:.78rem;padding:5px 12px;border-radius:6px;background:${c.bg};color:${c.col};font-weight:600`;
+  el.innerHTML = `${c.icon} ${c.txt}`;
+  if (state === 'ok') setTimeout(() => { if(el) el.style.display='none'; }, 3000);
+}
+
+
+// ══════════════════════════════ INIT ═════════════════════════════════════════
+function init() {
+  buildWordTable();
+  buildDiscTable();
+  buildCandidatoPage();
+}
+
+function buildDiscTable() {
+  const area = document.getElementById('disc-words-area');
+  if (!area) return;
+  let html = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.88rem">
+    <thead><tr style="background:#F0EBE0">
+      <th style="padding:10px 8px;text-align:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--border);width:36px">#</th>`;
+  DISC_FACTORS.forEach(f => {
+    html += `<th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;letter-spacing:.04em;color:${DISC_COLORS[f]};border-bottom:2px solid ${DISC_COLORS[f]};border-left:1px solid var(--border)">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${DISC_COLORS[f]};margin-right:5px;vertical-align:middle"></span>${f} — ${DISC_LABELS[f]}
+    </th>`;
+  });
+  html += `</tr></thead><tbody>`;
+  DISC_ROWS.forEach((row, ri) => {
+    html += `<tr style="border-bottom:1px solid #EDE8DC">
+      <td style="padding:8px;text-align:center;font-size:.72rem;font-weight:700;color:var(--muted)">${ri+1}</td>`;
+    DISC_FACTORS.forEach((f, fi) => {
+      html += `<td style="padding:5px 8px;border-left:1px solid #EDE8DC">
+        <button class="disc-btn" id="disc-wb-${ri}-${f}" onclick="selectDiscWord(${ri},'${f}')"
+          style="width:100%;padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);background:white;
+          cursor:pointer;font-family:inherit;font-size:.83rem;color:var(--text);transition:all .15s;text-align:center">
+          ${row[fi]}
+        </button></td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+  area.innerHTML = html;
+}
+
+function selectDiscWord(ri, factor) {
+  const prev = discRowSelections[ri];
+  if (prev) {
+    const pb = document.getElementById(`disc-wb-${ri}-${prev}`);
+    if (pb) { pb.style.background='white'; pb.style.color='var(--text)'; pb.style.borderColor='var(--border)'; pb.style.fontWeight='400'; }
+  }
+  if (prev === factor) {
+    discRowSelections[ri] = null;
+  } else {
+    discRowSelections[ri] = factor;
+    const b = document.getElementById(`disc-wb-${ri}-${factor}`);
+    if (b) { b.style.background=DISC_COLORS[factor]; b.style.color='white'; b.style.borderColor=DISC_COLORS[factor]; b.style.fontWeight='700'; }
+    if (!discStarted) {
+      discStarted = true;
+      const ba = document.getElementById('disc-bars-area');
+      if (ba) ba.style.display = 'block';
+    }
+  }
+  updateDiscBars();
+}
+
+function getDiscScores() {
+  const sc = { D:0, I:0, S:0, C:0 };
+  discRowSelections.forEach(f => { if (f) sc[f]++; });
+  return sc;
+}
+
+function getDominantDisc(sc) {
+  return DISC_FACTORS.slice().sort((a,b)=>sc[b]-sc[a])[0];
+}
+
+function updateDiscBars() {
+  const sc = getDiscScores();
+  DISC_FACTORS.forEach(f => {
+    const pct = Math.round((sc[f]/15)*100);
+    const el = document.getElementById('disc-pct-'+f);
+    const bar = document.getElementById('disc-bar-'+f);
+    const cnt = document.getElementById('disc-cnt-'+f);
+    if (el)  el.textContent  = pct+'%';
+    if (bar) bar.style.width = pct+'%';
+    if (cnt) cnt.textContent = sc[f]+' escolhas';
+  });
+}
+
+function buildWordTable() {
+  const area = document.getElementById('words-area');
+  // Header row
+  let html = `
+  <div style="overflow-x:auto">
+  <table id="word-table" style="width:100%;border-collapse:collapse;font-size:.88rem">
+    <thead>
+      <tr style="background:#F0EBE0">
+        <th style="padding:10px 8px;text-align:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--border);width:36px">#</th>`;
+  TEMPS.forEach((t,i) => {
+    html += `<th style="padding:10px 14px;text-align:center;font-size:.8rem;font-weight:700;letter-spacing:.04em;color:${COLORS[t]};border-bottom:2px solid ${COLORS[t]};border-left:1px solid var(--border)">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${COLORS[t]};margin-right:5px;vertical-align:middle"></span>
+      Grupo ${GRUPOS[i]}
+    </th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  WORD_ROWS.forEach((row, ri) => {
+    html += `<tr id="row-${ri}" style="border-bottom:1px solid #EDE8DC">
+      <td style="padding:8px;text-align:center;font-size:.72rem;font-weight:700;color:var(--muted)">${ri+1}</td>`;
+    TEMPS.forEach((t, ti) => {
+      html += `<td style="padding:5px 8px;border-left:1px solid #EDE8DC">
+        <button class="word-btn" id="wb-${ri}-${t}" data-row="${ri}" data-temp="${t}" onclick="selectWord(${ri},'${t}')"
+          style="width:100%;padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);background:white;
+          cursor:pointer;font-family:inherit;font-size:.83rem;color:var(--text);transition:all .15s;text-align:center">
+          ${row[ti]}
+        </button>
+      </td>`;
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  area.innerHTML = html;
+}
+
+function buildBars() {
+  // bars are hidden until first selection — rendered inline in buildWordTable area
+}
+
+function selectWord(rowIdx, temp) {
+  const prev = rowSelections[rowIdx];
+
+  // deselect previous in this row
+  if (prev) {
+    const prevBtn = document.getElementById(`wb-${rowIdx}-${prev}`);
+    if (prevBtn) {
+      prevBtn.style.background = 'white';
+      prevBtn.style.color = 'var(--text)';
+      prevBtn.style.borderColor = 'var(--border)';
+      prevBtn.style.fontWeight = '400';
+    }
+  }
+
+  // toggle: click same → deselect
+  if (prev === temp) {
+    rowSelections[rowIdx] = null;
+  } else {
+    rowSelections[rowIdx] = temp;
+    const btn = document.getElementById(`wb-${rowIdx}-${temp}`);
+    if (btn) {
+      btn.style.background = COLORS[temp];
+      btn.style.color = 'white';
+      btn.style.borderColor = COLORS[temp];
+      btn.style.fontWeight = '700';
+    }
+    if (!hasStarted) {
+      hasStarted = true;
+      document.getElementById('bars-area').style.display = 'grid';
+    }
+  }
+  updateBars();
+}
+
+function getScoresFromRows() {
+  const scores = { colerico:0, melancolico:0, sanguineo:0, fleumatico:0 };
+  rowSelections.forEach(t => { if (t) scores[t]++; });
+  return scores;
+}
+
+function updateBars() {
+  const scores = getScoresFromRows();
+  const total = Object.values(scores).reduce((a,b)=>a+b,0) || 1;
+  TEMPS.forEach(t => {
+    const pct = Math.round((scores[t] / 15) * 100);
+    const el = document.getElementById('pct-'+t);
+    const bar = document.getElementById('bar-'+t);
+    const cnt = document.getElementById('cnt-'+t);
+    if (el)  el.textContent  = pct+'%';
+    if (bar) bar.style.width = pct+'%';
+    if (cnt) cnt.textContent = scores[t]+' escolhas';
+  });
+}
+
+function getDominant(scores) {
+  return TEMPS.slice().sort((a,b) => scores[b]-scores[a])[0];
+}
+
+// ══════════════════════════════ ROLE ═════════════════════════════════════════
+function selRole(btn, role) {
+  // only target role-btns inside the cadastro page identification card
+  btn.closest('.role-row').querySelectorAll('.role-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedRole = role;
+  updateLiderSelect();
+}
+
+let liderFuncao = ''; // funcao do lider direto informada pelo participante
+function setLiderFuncao(val) { liderFuncao = val; }
+
+function updateLiderSelect(excludeId) {
+  const sel = document.getElementById('f-lider');
+  if (!sel) return;
+  const currentVal = sel.value;
+  sel.innerHTML = '<option value="">— Sem líder vinculado (topo) —</option>';
+
+  // Pre-registered leaders
+  const preRegs = lideresCadastrados.filter(l => !participants.find(p => p.nome === l.nome && p.role === 'lider'));
+  if (preRegs.length) {
+    const g0 = document.createElement('optgroup'); g0.label = '🎯 Líderes cadastrados';
+    preRegs.forEach(l => {
+      const o = document.createElement('option'); o.value=l.id;
+      o.textContent = l.nome + (l.cargo ? ' — ' + l.cargo : '');
+      if (l.id===currentVal) o.selected=true; g0.appendChild(o);
+    });
+    sel.appendChild(g0);
+  }
+
+  const opcoes = participants.filter(p => p.id !== excludeId);
+  const lideres   = opcoes.filter(p => p.role === 'lider');
+  const liderados = opcoes.filter(p => p.role === 'liderado');
+  if (lideres.length) {
+    const g = document.createElement('optgroup'); g.label = '🎯 Líderes (com diagnóstico)';
+    lideres.forEach(l => {
+      const o = document.createElement('option'); o.value=l.id;
+      o.textContent = l.nome + (l.cargo ? ' — '+l.cargo : l.area ? ' — '+l.area : '');
+      if (l.id===currentVal) o.selected=true; g.appendChild(o);
+    });
+    sel.appendChild(g);
+  }
+  if (liderados.length) {
+    const g = document.createElement('optgroup'); g.label = '🌱 Liderados';
+    liderados.forEach(l => {
+      const o = document.createElement('option'); o.value=l.id;
+      o.textContent = l.nome + (l.area ? ' — '+l.area : '');
+      if (l.id===currentVal) o.selected=true; g.appendChild(o);
+    });
+    sel.appendChild(g);
+  }
+
+  // auto-fill cargo when lider is selected
+  sel.onchange = () => autoFillLiderCargo(sel.value);
+  autoFillLiderCargo(sel.value);
+}
+
+function autoFillLiderCargo(selectedId) {
+  const cargoSel = document.getElementById('f-lider-cargo');
+  if (!cargoSel) return;
+  if (!selectedId) {
+    cargoSel.innerHTML = '<option value="">— Selecione o líder primeiro —</option>';
+    cargoSel.disabled = true;
+    return;
+  }
+  // find in lideresCadastrados or participants
+  const found = lideresCadastrados.find(l=>l.id===selectedId) || participants.find(p=>p.id===selectedId);
+  const cargos = ['Diretor','Gerente Executivo','Gerente','Coordenador','Supervisor'];
+  cargoSel.disabled = false;
+  const cargoAtual = found?.cargo || '';
+  cargoSel.innerHTML = '<option value="">— Selecione o cargo —</option>' +
+    cargos.map(c => `<option${c===cargoAtual?' selected':''}>${c}</option>`).join('');
+}
+
+// ══════════════════════════════ SAVE ═════════════════════════════════════════
+function salvar() {
+  const nome  = document.getElementById('f-nome').value.trim();
+  const cargo = document.getElementById('f-cargo').value;
+  const area  = document.getElementById('f-area').value;
+  if (!nome)  { showAlert('Informe o nome do participante.','info'); return; }
+  if (!cargo) { showAlert('Selecione o cargo.','info'); return; }
+  if (!area)  { showAlert('Selecione a área / setor.','info'); return; }
+  if (!selectedRole) { showAlert('Selecione a função: Líder ou Liderado.','info'); return; }
+  const totalSel = rowSelections.filter(r=>r!==null).length;
+  if (totalSel < 5) { showAlert('Responda ao menos 5 linhas do diagnóstico.','info'); return; }
+
+  const scores = getScoresFromRows();
+  const discScores = getDiscScores();
+  const liderCargoSel = document.getElementById('f-lider-cargo');
+  const p = {
+    id: Date.now().toString(), nome, cargo, area, role: selectedRole,
+    liderDiretoId:    document.getElementById('f-lider').value || null,
+    liderDiretoCargo: liderCargoSel ? liderCargoSel.value : '',
+    liderDiretoFunc:  liderFuncao,
+    temperamento: getDominant(scores), scores,
+    disc: getDominantDisc(discScores), discScores,
+    rowSelections: [...rowSelections],
+    discRowSelections: [...discRowSelections],
+    talento:    document.getElementById('f-talento').value.trim(),
+    caricatura: document.getElementById('f-caricatura').value.trim(),
+    alergia:    document.getElementById('f-alergia').value.trim(),
+    tarefa:     document.getElementById('f-tarefa').value.trim(),
+    ts: new Date().toLocaleString('pt-BR'),
+  };
+  participants.push(p);
+  saveData();
+  showAlert('✅ '+nome+' cadastrado com sucesso!','success');
+  limpar();
+}
+
+function limpar() {
+  document.getElementById('f-nome').value = '';
+  document.getElementById('f-cargo').value = '';
+  document.getElementById('f-area').value = '';
+  document.getElementById('f-talento').value = '';
+  document.getElementById('f-caricatura').value = '';
+  document.getElementById('f-alergia').value = '';
+  document.getElementById('f-tarefa').value = '';
+  selectedRole = null;
+  liderFuncao = '';
+  rowSelections = new Array(15).fill(null);
+  hasStarted = false;
+  // reset role buttons (only inside cadastro page)
+  document.querySelectorAll('#page-cadastro .role-btn').forEach(b => b.classList.remove('sel'));
+  // reset radio buttons
+  document.querySelectorAll('input[name="lider-func"]').forEach(r => { if(r.value==='') r.checked=true; });
+  document.querySelectorAll('.word-btn').forEach(btn => {
+    btn.style.background = 'white';
+    btn.style.color = 'var(--text)';
+    btn.style.borderColor = 'var(--border)';
+    btn.style.fontWeight = '400';
+  });
+  discRowSelections = new Array(15).fill(null);
+  discStarted = false;
+  document.querySelectorAll('.disc-btn').forEach(btn => {
+    btn.style.background = 'white'; btn.style.color = 'var(--text)';
+    btn.style.borderColor = 'var(--border)'; btn.style.fontWeight = '400';
+  });
+  const dba = document.getElementById('disc-bars-area');
+  if (dba) dba.style.display = 'none';
+  updateDiscBars();
+  document.getElementById('f-lider').value = '';
+  const lc = document.getElementById('f-lider-cargo');
+  if (lc) { lc.innerHTML='<option>— Selecione o líder primeiro —</option>'; lc.disabled=true; }
+  document.getElementById('bars-area').style.display = 'none';
+  updateBars();
+}
+function showAlert(msg, type) {
+  const el = document.getElementById('alerta');
+  el.className = 'alert alert-'+type+' show';
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+// ══════════════════════════════ DISC DATA ════════════════════════════════════
+const DISC_ROWS = [
+  ['Direto',        'Entusiasmado',   'Paciente',      'Preciso'      ],
+  ['Decidido',      'Otimista',       'Estável',       'Analítico'    ],
+  ['Competitivo',   'Persuasivo',     'Confiável',     'Metódico'     ],
+  ['Dominante',     'Inspirador',     'Tolerante',     'Sistemático'  ],
+  ['Assertivo',     'Comunicativo',   'Sereno',        'Criterioso'   ],
+  ['Ousado',        'Sociável',       'Consistente',   'Detalhista'   ],
+  ['Exigente',      'Carismático',    'Leal',          'Organizado'   ],
+  ['Independente',  'Expressivo',     'Apoiador',      'Cauteloso'    ],
+  ['Determinado',   'Animado',        'Diplomático',   'Perfeccionista'],
+  ['Objetivo',      'Criativo',       'Mediador',      'Disciplinado' ],
+  ['Resoluto',      'Espontâneo',     'Cooperativo',   'Rigoroso'     ],
+  ['Corajoso',      'Empático',       'Equilibrado',   'Lógico'       ],
+  ['Focado',        'Afetivo',        'Constante',     'Cuidadoso'    ],
+  ['Produtivo',     'Colaborativo',   'Adaptável',     'Estruturado'  ],
+  ['Eficiente',     'Motivador',      'Conciliador',   'Exato'        ],
+];
+const DISC_FACTORS = ['D','I','S','C'];
+const DISC_LABELS  = { D:'Dominância', I:'Influência', S:'Estabilidade', C:'Conformidade' };
+const DISC_COLORS  = { D:'#C0392B', I:'#E6AC00', S:'#27AE60', C:'#1A3A5C' };
+const DISC_DESC    = {
+  D:'Orientado a resultados, direto e decisivo. Age com velocidade, gosta de controlar situações e aceita desafios com facilidade.',
+  I:'Comunicativo, entusiasta e persuasivo. Motiva pessoas, cria engajamento e prefere ambientes colaborativos e variados.',
+  S:'Estável, leal e paciente. Trabalha bem em equipe, valoriza harmonia e é confiável — mas pode resistir a mudanças rápidas.',
+  C:'Analítico, preciso e organizado. Valoriza qualidade e conformidade com processos. Toma decisões baseadas em dados.',
+};
+const DISC_RECOMENDACOES = {
+  D: {
+    feedback:   'Seja direto e objetivo, vá ao ponto sem rodeios. Foque em resultados e impacto, não em processo. Deixe-o propor soluções antes de impor as suas.',
+    desenvolver:'Desafie com metas ambiciosas e autonomia real. Trabalhe escuta ativa e empatia — pontos cegos típicos do D. Dê espaço para liderar projetos de alto impacto.',
+    motivar:    'Novos desafios, poder de decisão e reconhecimento pelo resultado. Ele murcha em ambientes controlados ou excessivamente burocráticos.',
+    potencial:  'Posicione na linha de frente de projetos críticos que exijam velocidade e decisão. Canalizado, é um dos maiores executores da equipe.',
+  },
+  I: {
+    feedback:   'Valorize antes de corrigir. Use tom positivo e energético — ele responde bem quando sente que você acredita nele. Evite feedbacks frios ou excessivamente técnicos.',
+    desenvolver:'Trabalhe foco, organização e entrega consistente. Combine liberdade criativa com estrutura mínima. Comemore conclusões, não só inícios.',
+    motivar:    'Reconhecimento público, variedade e conexão com pessoas. Ele precisa de ambiente animado e sentir que seu trabalho impacta positivamente os outros.',
+    potencial:  'Use em comunicação, treinamentos e cultura. Com capacidade natural de inspirar e mobilizar pessoas, torna-se um multiplicador quando bem direcionado.',
+  },
+  S: {
+    feedback:   'Crie um ambiente seguro e privado. Seja gentil e específico — pergunte antes de afirmar. Ele precisa sentir que o feedback é construtivo, não uma ameaça.',
+    desenvolver:'Trabalhe iniciativa, posicionamento e velocidade de resposta. Incentive pequenas lideranças e ajude-o a se oferecer, não apenas esperar ser chamado.',
+    motivar:    'Harmonia, segurança e pertencimento. Ele se motiva quando sente que faz parte de algo coeso. Mudanças frequentes sem explicação o esgotam.',
+    potencial:  'Use como elo de coesão da equipe. Em projetos de longo prazo que exijam constância, lealdade e mediação de conflitos, ele é insubstituível.',
+  },
+  C: {
+    feedback:   'Seja estruturado e use dados concretos. Entregue por escrito quando possível. Valorize a precisão que ele traz. Evite feedbacks vagos ou excessivamente emocionais.',
+    desenvolver:'Trabalhe velocidade de entrega e tolerância à imprecisão. Mostre que 80% perfeito entregue supera 100% que ficou na gaveta. Defina prazos claros.',
+    motivar:    'Autonomia técnica, processos claros e ambiente organizado. Reconheça a qualidade do trabalho. Ele desmotiva com improvisação e mudanças sem justificativa lógica.',
+    potencial:  'Use como referência de qualidade e processos. Ele eleva o padrão técnico de tudo que toca. Ideal para análises críticas, auditoria e melhoria contínua.',
+  },
+};
+let discRowSelections = new Array(15).fill(null);
+let discStarted = false;
+
+// ══════════════════════════════ AÇÕES RECOMENDADAS ═══════════════════════════
+// Chave: temperamento_LIDER-temperamento_LIDERADO
+// Cada entrada: feedback, desenvolver, motivar, potencial
+const ACOES = {
+
+  // ── COLÉRICO lidera ──────────────────────────────────────────────────────
+  'colerico-colerico': {
+    feedback:   'Seja direto, objetivo e baseado em dados. Evite rodeios. Dê espaço para o liderado se justificar — ele também tem opinião forte. Use frases como "Resultado X, esperava Y, o que mudamos?".',
+    desenvolver:'Desafie com metas ambiciosas e autonomia real. Delegue projetos de alta visibilidade. Discuta carreira e crescimento frequentemente — ele precisa enxergar para onde está indo.',
+    motivar:    'Reconhecimento público, desafios novos e protagonismo. Dê autoridade para decidir dentro do seu escopo. Evite microgestão — ele interpreta como desconfiança.',
+    potencial:  'Coloque-o à frente de projetos que exijam liderança e resolução de problemas complexos. Peça que lidere reuniões e apresentações. Ele entrega mais quando sente que tem impacto real.',
+  },
+  'colerico-melancolico': {
+    feedback:   'Seja específico, traga dados e exemplos concretos. Evite generalizações. Dê tempo para ele processar — não pressione por resposta imediata. Um feedback por escrito complementa bem.',
+    desenvolver:'Ofereça projetos de análise profunda, processos e qualidade. Invista em capacitação técnica. Dê prazo adequado — ele trabalha melhor com estrutura e tempo para pensar.',
+    motivar:    'Reconhecimento pela qualidade e precisão do trabalho. Autonomia para organizar o próprio método. Evite cobrar velocidade acima da qualidade — gera ansiedade.',
+    potencial:  'Use-o como "revisão crítica" de projetos importantes. Ele encontra erros que outros não veem. Coloque-o em comitês de qualidade, auditoria interna ou processos de melhoria contínua.',
+  },
+  'colerico-sanguineo': {
+    feedback:   'Seja positivo no tom, mas firme no conteúdo. Ele aceita bem feedback quando sente que você acredita nele. Use a fórmula: reconheça → aponte → direcione. Evite feedbacks em público quando for corretivo.',
+    desenvolver:'Ofereça variedade de tarefas e projetos. Ele se desenvolve rápido quando está engajado. Trabalhe foco e conclusão — a tendência é iniciar muito e terminar pouco.',
+    motivar:    'Celebração pública, novas oportunidades e contato com pessoas. Mostre o impacto do trabalho dele nas pessoas ao redor. Ele precisa sentir entusiasmo no ambiente.',
+    potencial:  'Use-o em projetos que exijam comunicação, persuasão e engajamento de equipes. Ele é excelente em apresentações, treinamentos e disseminação de cultura. Canalizado, é um multiplicador natural.',
+  },
+  'colerico-fleumatico': {
+    feedback:   'Seja respeitoso e calmo no tom. Evite pressão e urgência excessiva — ele processa no próprio ritmo. Dê o feedback em particular, com exemplos claros. Valorize a estabilidade que ele traz.',
+    desenvolver:'Trabalhe tomada de decisão e posicionamento. Ele tende a evitar conflitos — ajude-o a desenvolver assertividade. Dê tarefas que exijam posicionamento claro e prazos definidos.',
+    motivar:    'Ambiente seguro, relacionamentos harmoniosos e previsibilidade. Reconheça a consistência e confiabilidade dele. Evite mudanças bruscas sem preparação prévia.',
+    potencial:  'Use-o como elo de integração da equipe — ele mantém a coesão nos momentos de tensão. É ótimo para mediação de conflitos, processos que exigem paciência e projetos de longo prazo.',
+  },
+
+  // ── MELANCÓLICO lidera ────────────────────────────────────────────────────
+  'melancolico-colerico': {
+    feedback:   'Seja rápido e direto — ele perde atenção em feedbacks longos. Foque no que precisa mudar e por quê impacta o resultado. Valide a energia e proatividade dele antes de corrigir.',
+    desenvolver:'Trabalhe planejamento, análise de riscos e escuta ativa. Ele age rápido mas nem sempre pensa nas consequências. Incentive-o a documentar e revisar antes de executar.',
+    motivar:    'Autonomia, metas desafiadoras e reconhecimento pela entrega. Mostre o caminho de crescimento. Ele desmotiva com excesso de burocracia e lentidão de processos.',
+    potencial:  'Direcione para projetos que exijam execução rápida e tomada de decisão. Com orientação, ele vira um executor excepcional. Equilibre dando-lhe estrutura sem engessá-lo.',
+  },
+  'melancolico-melancolico': {
+    feedback:   'Seja detalhado, fundamentado e por escrito quando possível. Ele leva feedback a sério — seja cuidadoso para não gerar excesso de autocrítica. Equilibre apontamentos com reconhecimento da qualidade.',
+    desenvolver:'Trabalhe velocidade de decisão e tolerância à imprecisão. Ele tende à paralisia por análise. Incentive o conceito de "bom o suficiente para avançar".',
+    motivar:    'Reconhecimento pela qualidade, excelência e profundidade. Ambiente organizado e processos claros. Evite improvisação e mudanças sem justificativa lógica.',
+    potencial:  'Use-o em projetos que exijam rigor, documentação e análise crítica. Ele eleva o padrão de qualidade de tudo que toca. Coloque-o como referência técnica da área.',
+  },
+  'melancolico-sanguineo': {
+    feedback:   'Seja caloroso e valorize o entusiasmo antes de corrigir. Ele precisa sentir que você acredita nele. Use exemplos concretos — generalizações não funcionam. Evite tom frio ou excessivamente técnico.',
+    desenvolver:'Trabalhe organização, foco e entrega com consistência. Ajude-o a criar rotinas e checklists. Combine liberdade criativa com processos mínimos de acompanhamento.',
+    motivar:    'Variedade de tarefas, reconhecimento público e contato humano. Mostre como o trabalho dele impacta positivamente as pessoas. Ele murcha em ambientes muito rígidos ou solitários.',
+    potencial:  'Use-o em iniciativas de comunicação, engajamento e cultura. Ele tem capacidade de inspirar e mobilizar pessoas. Com estrutura adequada, transforma energia em resultado.',
+  },
+  'melancolico-fleumatico': {
+    feedback:   'Seja gentil, específico e crie um ambiente seguro para a conversa. Ele não gosta de confronto — aborde de forma colaborativa, não acusatória. Pergunte antes de afirmar.',
+    desenvolver:'Trabalhe protagonismo, posicionamento e iniciativa. Ele espera ser solicitado em vez de se oferecer. Incentive-o a liderar pequenas iniciativas e a expressar sua opinião nas reuniões.',
+    motivar:    'Harmonia, reconhecimento discreto e ambiente estável. Ele se motiva quando sente que faz parte de algo coeso. Mudanças frequentes sem explicação o desmotivam.',
+    potencial:  'Use-o como suporte estratégico em projetos de longo prazo. Ele é leal, consistente e raramente gera conflito. Excelente para funções que exigem paciência, mediação e continuidade.',
+  },
+
+  // ── SANGUÍNEO lidera ──────────────────────────────────────────────────────
+  'sanguineo-colerico': {
+    feedback:   'Seja direto e objetivo — ele não quer rodeios. Admita quando ele tem razão. Evite ser emocional na abordagem. Foque em fatos e impacto no resultado.',
+    desenvolver:'Trabalhe planejamento e execução disciplinada. Use a energia dele a favor com metas claras e competição saudável. Ajude-o a canalizar a assertividade sem gerar conflitos.',
+    motivar:    'Desafios, protagonismo e reconhecimento pelo resultado. Ele precisa sentir que está crescendo e que seu trabalho tem impacto visível. Dê autonomia com responsabilidade.',
+    potencial:  'Coloque-o na linha de frente de projetos que exijam execução rápida e decisão. Com direcionamento adequado, ele é um dos maiores entregadores da equipe.',
+  },
+  'sanguineo-melancolico': {
+    feedback:   'Seja paciente e detalhado. Ele precisa de contexto e exemplos concretos para entender. Use um tom acolhedor — ele é sensível à forma como a mensagem é transmitida. Dê tempo para processar.',
+    desenvolver:'Trabalhe confiança nas próprias análises e agilidade na entrega. Ele tende a revisar demais — defina padrões de qualidade aceitáveis para evitar paralisia.',
+    motivar:    'Reconhecimento pela qualidade, autonomia no método e ambiente organizado. Mostre como o trabalho detalhado dele impacta positivamente o todo.',
+    potencial:  'Use-o como guardião da qualidade e dos processos. Ele garante que o entusiasmo da equipe não gere erros. É o equilíbrio natural entre criatividade e precisão.',
+  },
+  'sanguineo-sanguineo': {
+    feedback:   'Seja leve, positivo e use exemplos. Ele responde bem ao entusiasmo do líder. Cuidado com feedbacks que soem como crítica ao "ser" dele — foque no comportamento, não na pessoa.',
+    desenvolver:'Trabalhe foco, conclusão de tarefas e consistência. Defina um projeto por vez. Comemore entregas — não só inícios. Ajude-o a construir o hábito de finalizar.',
+    motivar:    'Ambiente animado, reconhecimento frequente e variedade. Ele precisa de novidade para manter a chama acesa. Monotonia é o maior inimigo da produtividade dele.',
+    potencial:  'Direcione para projetos de comunicação, inovação e cultura. Ele tem energia contagiante e capacidade de mobilizar pessoas. Com foco, é um catalisador de transformação.',
+  },
+  'sanguineo-fleumatico': {
+    feedback:   'Seja caloroso, vá devagar e crie um ambiente de confiança. Ele processa internamente — não force respostas imediatas. Evite feedbacks em grupo. Pergunte como ele está se sentindo.',
+    desenvolver:'Trabalhe posicionamento, velocidade de resposta e iniciativa. Ele tende a esperar o momento certo — que às vezes nunca chega. Incentive pequenas tomadas de posição.',
+    motivar:    'Segurança, reconhecimento tranquilo e senso de contribuição. Ele se motiva quando percebe que é valorizado e que o ambiente é harmônico. Conflitos o fazem recuar.',
+    potencial:  'Use-o como âncora da equipe nos momentos de agitação. Ele acalma, organiza e mantém o foco. Excelente para projetos de longo prazo que exijam constância e confiabilidade.',
+  },
+
+  // ── FLEUMÁTICO lidera ─────────────────────────────────────────────────────
+  'fleumatico-colerico': {
+    feedback:   'Seja rápido, direto e reconheça a entrega antes de corrigir. Ele tem ego sensível ao tom — seja firme, mas sem agressividade. Dê espaço para ele responder.',
+    desenvolver:'Trabalhe paciência, escuta e trabalho em equipe. Ajude-o a entender que velocidade sem alinhamento gera retrabalho. Crie rituais de planejamento conjunto.',
+    motivar:    'Desafios visíveis, autonomia e crescimento rápido. Mostre o caminho de evolução e dê-lhe protagonismo em iniciativas de impacto. Ele desmotiva com excesso de controle.',
+    potencial:  'Direcione para execução de projetos estratégicos com autonomia. Com orientação, ele entrega resultados expressivos em pouco tempo. Seja o contrapeso que dá direção sem frear.',
+  },
+  'fleumatico-melancolico': {
+    feedback:   'Seja estruturado, use dados e exemplos escritos. Ele leva a sério e precisa de clareza. Aborde em particular, com calma. Valorize a profundidade que ele traz.',
+    desenvolver:'Trabalhe velocidade de entrega e tomada de decisão sob incerteza. Mostre que 80% perfeito entregue é melhor que 100% que não saiu. Dê prazos menores e claros.',
+    motivar:    'Autonomia técnica, reconhecimento pela qualidade e ambiente estruturado. Ele precisa de rotina e previsibilidade para performar bem. Mudanças constantes o esgotam.',
+    potencial:  'Use-o como referência técnica e de processos. Ele documenta, organiza e garante padrão de qualidade. É o tipo de profissional que eleva o nível de toda a equipe ao redor.',
+  },
+  'fleumatico-sanguineo': {
+    feedback:   'Seja entusiasmado e positivo no tom — ele precisa sentir a energia. Use histórias e exemplos. Cuidado com feedbacks frios ou muito técnicos — ele desliga. Celebre antes de corrigir.',
+    desenvolver:'Trabalhe foco, organização e disciplina de entrega. Crie estrutura leve — checklists, rituais de acompanhamento. Combine liberdade criativa com resultados mensuráveis.',
+    motivar:    'Reconhecimento público, variedade e projetos que envolvam pessoas. Mostre o impacto humano do trabalho dele. Ambiente animado e conexões genuínas são o combustível dele.',
+    potencial:  'Use-o como embaixador da cultura e do engajamento da equipe. Ele inspira, comunica e conecta pessoas. Com estrutura, se torna um multiplicador de alta performance.',
+  },
+  'fleumatico-fleumatico': {
+    feedback:   'Seja gentil, crie um espaço seguro e não force respostas imediatas. Ele precisa de tempo para processar. Use a escuta ativa — faça perguntas abertas e ouça sem interromper.',
+    desenvolver:'Trabalhe iniciativa, posicionamento e velocidade de decisão. Ajude-o a sair da zona de conforto com passos pequenos e seguros. Desafie-o com gentileza.',
+    motivar:    'Ambiente estável, relacionamentos de confiança e senso de contribuição. Mostre como o trabalho dele sustenta o todo. Ele precisa sentir que pertence e que é valorizado.',
+    potencial:  'Use-o em projetos de longo prazo que exijam consistência, paciência e construção de relacionamentos. Ele é o fio que mantém a equipe unida nos momentos de pressão.',
+  },
+};
+
+function renderPainel() {
+  const lideres   = participants.filter(p => p.role === 'lider');
+  const liderados = participants.filter(p => p.role === 'liderado');
+  const total     = participants.length;
+
+  const counts = { colerico:0, melancolico:0, sanguineo:0, fleumatico:0 };
+  participants.forEach(p => counts[p.temperamento]++);
+  const dominant = TEMPS.slice().sort((a,b) => counts[b]-counts[a])[0];
+
+  // STATS
+  document.getElementById('stats').innerHTML = [
+    { num: total,           label:'Participantes' },
+    { num: lideres.length,  label:'Líderes' },
+    { num: liderados.length,label:'Liderados' },
+    { num: total > 0 ? LABELS[dominant].slice(0,5)+'.' : '—', label:'Temp. Dominante' },
+  ].map(s => `<div class="stat"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
+
+  // LEGEND
+  const tot = total || 1;
+  document.getElementById('legend').innerHTML = TEMPS.map(t => `
+    <div class="legend-item">
+      <div class="ldot" style="background:${COLORS[t]}"></div>
+      <span style="width:100px">${LABELS[t]}</span>
+      <div class="lbar-track"><div class="lbar-fill" style="background:${COLORS[t]};width:${Math.round((counts[t]/tot)*100)}%"></div></div>
+      <span class="lcount">${counts[t]}</span>
+      <span style="font-size:.75rem;color:var(--muted);min-width:34px">${Math.round((counts[t]/tot)*100)}%</span>
+    </div>
+  `).join('');
+
+  // TABLE
+  const tw = document.getElementById('table-wrap');
+  if (total === 0) {
+    tw.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum participante cadastrado ainda.<br>Use a aba <strong>Diagnóstico</strong> para adicionar pessoas.</p></div>';
+  } else {
+    const rows = participants.map(p => {
+      const lider = p.liderDiretoId ? (participants.find(x=>x.id===p.liderDiretoId) || lideresCadastrados.find(x=>x.id===p.liderDiretoId)) : null;
+      const liderInfo = lider
+        ? `<strong>${lider.nome}</strong><br><span style="font-size:.72rem;color:var(--muted)">${p.liderDiretoCargo||lider.cargo||''} ${p.liderDiretoFunc?'· '+(p.liderDiretoFunc==='lider'?'🎯 Líder':'🌱 Liderado'):''}</span>`
+        : '<em style="color:var(--muted)">—</em>';
+      return `<tr>
+        <td><strong>${p.nome}</strong><br><span style="font-size:.72rem;color:var(--muted)">${p.cargo||''} · ${p.area||''}</span></td>
+        <td>${p.role==='lider'?'🎯 Líder':'🌱 Liderado'}</td>
+        <td>
+          <span class="badge ${p.temperamento}">${LABELS[p.temperamento]}</span>
+          ${p.disc ? `<br><span style="font-size:.72rem;margin-top:3px;display:inline-block;padding:2px 8px;border-radius:8px;background:${DISC_COLORS[p.disc]}18;color:${DISC_COLORS[p.disc]};font-weight:700">${p.disc} — ${DISC_LABELS[p.disc]}</span>` : ''}
+        </td>
+        <td style="font-size:.82rem">${liderInfo}</td>
+        <td style="font-size:.78rem;color:var(--muted);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.talento||'—'}</td>
+        <td>
+          <button onclick="verDetalhe('${p.id}')" style="margin-right:5px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.75rem;font-family:inherit">Ver</button>
+          <button onclick="remover('${p.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.75rem;font-family:inherit">✕</button>
+        </td>
+      </tr>`;
+    }).join('');
+    tw.innerHTML = `<table class="tbl">
+      <thead><tr><th>Nome / Cargo</th><th>Função</th><th>Temperamento</th><th>Líder Direto</th><th>Talento</th><th>Ações</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  // CORRELAÇÕES
+  const cw = document.getElementById('corr-wrap');
+  const pares = participants.filter(p => p.liderDiretoId);
+  if (pares.length === 0) {
+    cw.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>As correlações aparecem quando houver participantes com <strong>líder direto</strong> vinculado.</p></div>';
+    return;
+  }
+
+  const miniBar = (val, max, color) => {
+    const pct = Math.round((val/max)*100);
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+      <span style="font-size:.72rem;width:80px;color:${color};font-weight:600">${LABELS[TEMPS[TEMPS.findIndex(t=>COLORS[t]===color)]]||''}</span>
+      <div style="flex:1;height:5px;background:#EDE8DC;border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px"></div>
+      </div>
+      <span style="font-size:.72rem;font-weight:700;color:${color};min-width:28px">${pct}%</span>
+    </div>`;
+  };
+
+  const profileBars = (p) => TEMPS.map(t => {
+    const pct = Math.round((p.scores[t]/15)*100);
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+      <span style="font-size:.7rem;width:76px;color:${COLORS[t]};font-weight:600">${LABELS[t]}</span>
+      <div style="flex:1;height:5px;background:#EDE8DC;border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${COLORS[t]};border-radius:3px"></div>
+      </div>
+      <span style="font-size:.7rem;font-weight:700;color:${COLORS[t]};min-width:26px">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  const cards = pares.map(subordinado => {
+    const superior = participants.find(x => x.id === subordinado.liderDiretoId);
+    if (!superior) return '';
+    const k1 = superior.temperamento+'-'+subordinado.temperamento;
+    const k2 = subordinado.temperamento+'-'+superior.temperamento;
+    const c = CORR[k1] || CORR[k2] || {tipo:'neutral',cor:'#E67E22',tl:'Combinação',desc:'Perfis com dinâmica a ser explorada em contexto.'};
+    const a = ACOES[k1] || ACOES[k2] || null;
+    const supLabel = superior.role === 'lider' ? '🎯' : '🌱';
+    const subLabel = subordinado.role === 'lider' ? '🎯' : '🌱';
+    const cid = 'c'+superior.id.slice(-4)+subordinado.id.slice(-4);
+
+    const profileBars = (p) => TEMPS.map(t => {
+      const pct = Math.round((p.scores[t]/15)*100);
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span style="font-size:.7rem;width:76px;color:${COLORS[t]};font-weight:600">${LABELS[t]}</span>
+        <div style="flex:1;height:5px;background:#EDE8DC;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${COLORS[t]};border-radius:3px"></div>
+        </div>
+        <span style="font-size:.7rem;font-weight:700;color:${COLORS[t]};min-width:26px">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    const acaoBlock = (icon, label, text, bg) => text ? `
+      <div style="background:${bg};border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#555;margin-bottom:5px">${icon} ${label}</div>
+        <div style="font-size:.82rem;color:#333;line-height:1.65">${text}</div>
+      </div>` : '';
+
+    return `<div style="background:white;border-radius:14px;border:1px solid var(--border);border-top:4px solid ${c.cor};padding:22px;margin-bottom:20px">
+
+      <!-- CABEÇALHO -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="badge ${superior.temperamento}">${supLabel} ${superior.nome}</span>
+        <span style="color:var(--muted);font-size:.85rem">→ lidera →</span>
+        <span class="badge ${subordinado.temperamento}">${subLabel} ${subordinado.nome}</span>
+        <span style="margin-left:auto;font-size:.72rem;font-weight:700;color:${c.cor};background:${c.cor}18;padding:3px 10px;border-radius:10px">${TIPO_LABELS[c.tipo]}</span>
+      </div>
+
+      <!-- DINÂMICA -->
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:4px">${c.tl}</div>
+      <div style="font-size:.83rem;color:#555;line-height:1.65;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #EDE8DC">${c.desc}</div>
+
+      <!-- PERFIS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:#F8F5EE;border-radius:8px;padding:12px">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px">${supLabel} ${superior.nome}</div>
+          ${profileBars(superior)}
+        </div>
+        <div style="background:#F8F5EE;border-radius:8px;padding:12px">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px">${subLabel} ${subordinado.nome}</div>
+          ${profileBars(subordinado)}
+        </div>
+      </div>
+
+      <!-- TALENTOS DO LIDERADO -->
+      ${subordinado.talento||subordinado.alergia||subordinado.caricatura||subordinado.tarefa ? `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #EDE8DC">
+        ${subordinado.talento    ? `<div style="font-size:.78rem;padding:8px 10px;background:#FFF8E7;border-radius:6px"><strong>⚡ Talento:</strong> ${subordinado.talento}</div>` : '<div></div>'}
+        ${subordinado.alergia    ? `<div style="font-size:.78rem;padding:8px 10px;background:#FFF0F0;border-radius:6px"><strong>⚠️ Alergia:</strong> ${subordinado.alergia}</div>` : '<div></div>'}
+        ${subordinado.caricatura ? `<div style="font-size:.78rem;padding:8px 10px;background:#F0F4FF;border-radius:6px"><strong>🪞 Caricatura:</strong> ${subordinado.caricatura}</div>` : '<div></div>'}
+        ${subordinado.tarefa     ? `<div style="font-size:.78rem;padding:8px 10px;background:#EDFBF1;border-radius:6px"><strong>🎯 Tarefa:</strong> ${subordinado.tarefa}</div>` : '<div></div>'}
+      </div>` : ''}
+
+      <!-- AÇÕES RECOMENDADAS -->
+      ${a ? `
+      <div style="margin-bottom:8px">
+        <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+          <span style="flex:1;height:1px;background:var(--border)"></span>
+          🧭 Ações Recomendadas para o Líder
+          <span style="flex:1;height:1px;background:var(--border)"></span>
+        </div>
+        ${acaoBlock('💬','Como dar Feedback', a.feedback, '#FFF8E7')}
+        ${acaoBlock('📈','Como Desenvolver', a.desenvolver, '#F0F4FF')}
+        ${acaoBlock('🔥','Como Motivar', a.motivar, '#FFF0FA')}
+        ${acaoBlock('🚀','Como Extrair o Máximo de Potencial', a.potencial, '#EDFBF1')}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  cw.innerHTML = cards || '<div class="empty"><div class="empty-icon">🔍</div><p>Vincule liderados aos seus líderes para ver as correlações.</p></div>';
+}
+
+// ══════════════════════════════ DETAIL ═══════════════════════════════════════
+function verDetalhe(id) {
+  const p = participants.find(x => x.id === id);
+  if (!p) return;
+  const lider = p.liderDiretoId ? participants.find(x=>x.id===p.liderDiretoId) : null;
+  document.getElementById('m-nome').textContent = p.nome;
+  document.getElementById('m-meta').textContent = `${p.role==='lider'?'🎯 Líder':'🌱 Liderado'} · ${p.area||''} · ${p.ts}${lider?' · Líder: '+lider.nome:''}`;
+
+  const barsHtml = TEMPS.map(t => {
+    const pct = Math.round((p.scores[t]/WORDS[t].length)*100);
+    return `<div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px"><span style="font-weight:600">${LABELS[t]}</span><span style="color:${COLORS[t]};font-weight:700">${p.scores[t]} · ${pct}%</span></div>
+      <div style="height:6px;background:#EDE8DC;border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${COLORS[t]};border-radius:3px"></div></div>
+    </div>`;
+  }).join('');
+
+  const fields = [
+    {icon:'⚡',label:'Talento',val:p.talento},
+    {icon:'🪞',label:'Caricatura',val:p.caricatura},
+    {icon:'😤',label:'Alergia',val:p.alergia},
+    {icon:'🎯',label:'Tarefa',val:p.tarefa},
+  ].filter(f=>f.val).map(f=>`
+    <div class="detail-block">
+      <div class="detail-label">${f.icon} ${f.label}</div>
+      <div class="detail-val">${f.val}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('m-body').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="badge ${p.temperamento}">${LABELS[p.temperamento]}</span>
+      ${p.disc ? `<span style="font-size:.82rem;padding:4px 12px;border-radius:10px;background:${DISC_COLORS[p.disc]}18;color:${DISC_COLORS[p.disc]};font-weight:700">${p.disc} — ${DISC_LABELS[p.disc]}</span>` : ''}
+    </div>
+    <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🧭 Temperamento (Essência)</div>
+    <div style="margin-bottom:16px">${barsHtml}</div>
+    ${p.discScores ? `
+    <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;margin-top:4px">🧩 DISC (Comportamento)</div>
+    <div style="margin-bottom:16px">${DISC_FACTORS.map(f => {
+      const pct = Math.round(((p.discScores[f]||0)/15)*100);
+      return `<div style="margin-bottom:9px">
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+          <span style="font-weight:600;color:${DISC_COLORS[f]}">${f} — ${DISC_LABELS[f]}</span>
+          <span style="color:${DISC_COLORS[f]};font-weight:700">${p.discScores[f]||0} · ${pct}%</span>
+        </div>
+        <div style="height:6px;background:#EDE8DC;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${DISC_COLORS[f]};border-radius:3px"></div>
+        </div>
+      </div>`;
+    }).join('')}</div>
+    <p style="font-size:.83rem;color:#555;line-height:1.6;margin-bottom:14px;padding:10px 14px;background:#F8F5EE;border-radius:8px">${p.disc?DISC_DESC[p.disc]:''}</p>` : ''}
+    ${fields}
+  `;
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function fecharModal() { document.getElementById('modal-bg').classList.remove('open'); }
+
+function remover(id) {
+  if (!confirm('Remover este participante? Esta ação não pode ser desfeita.')) return;
+  participants = participants.filter(p => p.id !== id);
+  saveData();
+  renderPainel();
+}
+
+// ══════════════════════════════ NAV ══════════════════════════════════════════
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  if (name === 'painel')     renderPainel();
+  if (name === 'lideres')    { renderLideres(); updateSuperiorSelect(); }
+  if (name === 'cadastro')   updateLiderSelect();
+  if (name === 'candidatos') renderCandidatos();
+  if (name === 'mapa')       renderMapa();
+}
+
+// ══════════════════════════════ TAB SWITCHER ═════════════════════════════════
+function switchDiagTab(tab) {
+  const isTemp = tab === 'temp';
+  // panels
+  document.getElementById('tab-panel-temp').style.display = isTemp ? 'block' : 'none';
+  document.getElementById('tab-panel-disc').style.display = isTemp ? 'none'  : 'block';
+  // buttons
+  const btnTemp = document.getElementById('tab-btn-temp');
+  const btnDisc = document.getElementById('tab-btn-disc');
+  btnTemp.style.background      = isTemp ? 'var(--text)' : '#F0EBE0';
+  btnTemp.style.color           = isTemp ? 'var(--bg)'   : 'var(--muted)';
+  btnTemp.style.borderBottom    = isTemp ? '3px solid var(--gold)' : '3px solid transparent';
+  btnDisc.style.background      = isTemp ? '#F0EBE0' : 'var(--text)';
+  btnDisc.style.color           = isTemp ? 'var(--muted)' : 'var(--bg)';
+  btnDisc.style.borderBottom    = isTemp ? '3px solid transparent' : '3px solid var(--gold)';
+}
+
+// ══════════════════════════════ MAPA MENTAL ══════════════════════════════════
+let mapaOpenId = null; // id do nó de liderado atualmente aberto
+
+function renderMapa() {
+  const wrap = document.getElementById('mapa-wrap');
+  if (!wrap) return;
+
+  // only participants with diagnóstico (have temperamento)
+  const lideres = participants.filter(p => p.role === 'lider' && p.temperamento);
+
+  if (lideres.length === 0) {
+    wrap.innerHTML = `<div class="mapa-empty"><div class="me-icon">🗺️</div>
+      <p>Nenhum líder com diagnóstico ainda.<br>Registre líderes e complete o diagnóstico de temperamento.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = lideres.map(lider => {
+    const liderados = participants.filter(p => p.liderDiretoId === lider.id);
+    const tempColor = COLORS[lider.temperamento] || '#333';
+    const tempLabel = LABELS[lider.temperamento] || lider.temperamento;
+    const discBadge = lider.disc
+      ? `<span class="mn-badge" style="background:${DISC_COLORS[lider.disc]}28;color:${DISC_COLORS[lider.disc]}">${lider.disc} — ${DISC_LABELS[lider.disc]}</span>`
+      : '';
+
+    // talentos compactos
+    const talentoTags = [
+      lider.talento    ? `⚡ ${lider.talento.substring(0,40)}${lider.talento.length>40?'…':''}` : null,
+      lider.alergia    ? `😤 ${lider.alergia.substring(0,40)}${lider.alergia.length>40?'…':''}` : null,
+    ].filter(Boolean).map(t => `<div style="font-size:.7rem;opacity:.75;margin-top:4px">${t}</div>`).join('');
+
+    const lideradosHtml = liderados.length === 0
+      ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">Nenhum liderado vinculado com diagnóstico</div>`
+      : `<div class="mapa-liderados-row">
+          ${liderados.map(lid => buildLideradoNode(lid, lider)).join('')}
+        </div>`;
+
+    return `<div class="mapa-bloco">
+      <div class="card" style="overflow:visible">
+        <!-- LÍDER NODE -->
+        <div style="display:flex;justify-content:center;margin-bottom:0">
+          <div class="mapa-lider-node">
+            <div class="mn-nome">${lider.nome}</div>
+            <div class="mn-cargo">${lider.cargo||''} ${lider.area ? '· '+lider.area : ''}</div>
+            <div class="mn-badges">
+              <span class="mn-badge" style="background:${tempColor}28;color:${tempColor}">${tempLabel}</span>
+              ${discBadge}
+            </div>
+            ${talentoTags}
+          </div>
+        </div>
+        <!-- CONNECTOR + LIDERADOS -->
+        <div class="mapa-connector-wrap" style="margin-top:0"></div>
+        ${lideradosHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildLideradoNode(lid, lider) {
+  const tc = COLORS[lid.temperamento] || '#888';
+  const tl = LABELS[lid.temperamento] || lid.temperamento || '—';
+  const discBadge = lid.disc
+    ? `<span style="font-size:.66rem;padding:2px 7px;border-radius:7px;background:${DISC_COLORS[lid.disc]}22;color:${DISC_COLORS[lid.disc]};font-weight:700">${lid.disc}</span>`
+    : '';
+  return `<div class="mapa-liderado-col">
+    <div class="mapa-liderado-node" id="mln-${lid.id}" onclick="toggleMapaDetail('${lid.id}','${lider.id}')">
+      <div class="mln-nome">${lid.nome}</div>
+      <div class="mln-cargo">${lid.cargo||lid.area||''}</div>
+      <div class="mln-badges">
+        <span style="font-size:.66rem;padding:2px 7px;border-radius:7px;background:${tc}22;color:${tc};font-weight:700">${tl}</span>
+        ${discBadge}
+      </div>
+    </div>
+    <div id="mdp-${lid.id}" style="display:none;width:320px;max-width:92vw"></div>
+  </div>`;
+}
+
+function toggleMapaDetail(lidId, liderIdArg) {
+  const panel = document.getElementById('mdp-'+lidId);
+  const node  = document.getElementById('mln-'+lidId);
+  const isOpen = panel.style.display !== 'none';
+
+  // close all first
+  document.querySelectorAll('[id^="mdp-"]').forEach(p => { p.style.display='none'; p.innerHTML=''; });
+  document.querySelectorAll('.mapa-liderado-node').forEach(n => n.classList.remove('expanded'));
+
+  if (isOpen) return; // toggle off
+
+  const lid   = participants.find(p => p.id === lidId);
+  const lider = participants.find(p => p.id === liderIdArg);
+  if (!lid || !lider) return;
+
+  node.classList.add('expanded');
+
+  // Correlação temperamento
+  const tk1 = lider.temperamento+'-'+lid.temperamento;
+  const tk2  = lid.temperamento+'-'+lider.temperamento;
+  const corr  = CORR[tk1] || CORR[tk2] || null;
+  const corrHtml = corr ? `
+    <div class="mdp-section">
+      <div class="mdp-label">🔗 Correlação de Temperamento</div>
+      <span style="font-size:.72rem;padding:3px 9px;border-radius:8px;background:${corr.cor}22;color:${corr.cor};font-weight:700;display:inline-block;margin-bottom:5px">${corr.tipo} — ${corr.titulo}</span>
+      <div style="color:#555">${corr.desc}</div>
+    </div>` : '';
+
+  // Ações recomendadas (baseado no temperamento do liderado)
+  const ak1 = lider.temperamento+'-'+lid.temperamento;
+  const ak2  = lid.temperamento+'-'+lider.temperamento;
+  const acoes = ACOES[ak1] || ACOES[ak2] || null;
+  const acoesHtml = acoes ? `
+    <div class="mdp-section">
+      <div class="mdp-label">🧭 Recomendações para o Líder</div>
+      ${[['💬','Feedback',acoes.feedback,'#FFF8E7'],['📈','Desenvolver',acoes.desenvolver,'#F0F4FF'],['🔥','Motivar',acoes.motivar,'#FFF0FA'],['🚀','Potencial',acoes.potencial,'#EDFBF1']]
+        .map(([ic,lb,tx,bg])=>`<div style="background:${bg};border-radius:6px;padding:8px 10px;margin-bottom:6px">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-bottom:2px">${ic} ${lb}</div>
+          <div style="font-size:.77rem;color:#333;line-height:1.5">${tx}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // DISC do liderado
+  const discHtml = lid.disc ? `
+    <div class="mdp-section">
+      <div class="mdp-label">🧩 Perfil DISC</div>
+      <span style="font-size:.72rem;padding:3px 9px;border-radius:8px;background:${DISC_COLORS[lid.disc]}22;color:${DISC_COLORS[lid.disc]};font-weight:700;display:inline-block;margin-bottom:5px">${lid.disc} — ${DISC_LABELS[lid.disc]}</span>
+      <div style="color:#555;font-size:.78rem">${DISC_DESC[lid.disc]||''}</div>
+    </div>` : '';
+
+  // Talentos
+  const talHtml = [
+    lid.talento   ? ['⚡','Talento',lid.talento]    : null,
+    lid.caricatura? ['🪞','Caricatura',lid.caricatura]: null,
+    lid.alergia   ? ['😤','Alergia',lid.alergia]    : null,
+    lid.tarefa    ? ['🎯','Tarefa',lid.tarefa]       : null,
+  ].filter(Boolean).map(([ic,lb,tx])=>`
+    <div style="margin-bottom:6px">
+      <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">${ic} ${lb}</span>
+      <div style="font-size:.77rem;color:#333;line-height:1.5">${tx}</div>
+    </div>`).join('');
+  const talentoSection = talHtml ? `<div class="mdp-section"><div class="mdp-label">✨ Talentos & Tarefas</div>${talHtml}</div>` : '';
+
+  panel.innerHTML = `<div class="mapa-detail-panel">
+    <div class="mdp-header">
+      ${lid.nome} <span style="opacity:.65;font-weight:400">· ${lid.cargo||''} ${lid.area?'· '+lid.area:''}</span>
+    </div>
+    <div class="mdp-body">
+      <div class="mdp-section">
+        <div class="mdp-label">🧠 Temperamento</div>
+        <span style="font-size:.72rem;padding:3px 9px;border-radius:8px;background:${COLORS[lid.temperamento]}22;color:${COLORS[lid.temperamento]};font-weight:700;display:inline-block">${LABELS[lid.temperamento]||'—'}</span>
+      </div>
+      ${discHtml}
+      ${corrHtml}
+      ${talentoSection}
+      ${acoesHtml}
+    </div>
+  </div>`;
+  panel.style.display = 'block';
+  // smooth scroll so detail is visible
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+
+// ══════════════════════════════ CANDIDATOS ════════════════════════════════════
+// Candidatos são participantes com role === 'candidato'
+// O link abre o app com ?modo=candidato — esconde nav e mostra só o DISC
+
+function buildCandidatoPage() {
+  // build the DISC table rows
+  const tbody = document.getElementById('disc-cand-body');
+  if (tbody) {
+    tbody.innerHTML = DISC_ROWS.map((row, ri) => `
+      <tr style="border-bottom:1px solid #EDE8DC">
+        <td style="padding:8px;text-align:center;font-size:.72rem;font-weight:700;color:var(--muted)">${ri+1}</td>
+        ${DISC_FACTORS.map((f,fi) => `
+        <td style="padding:5px 8px;border-left:1px solid #EDE8DC">
+          <button id="disc-cand-${ri}-${f}" onclick="selectDiscCandWord(${ri},'${f}')"
+            style="width:100%;padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);background:white;
+            cursor:pointer;font-family:inherit;font-size:.83rem;color:var(--text);transition:all .15s;text-align:center">
+            ${row[fi]}
+          </button>
+        </td>`).join('')}
+      </tr>`).join('');
+  }
+  // check if we're in candidato mode (URL param)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('modo') === 'candidato') {
+    document.querySelector('.storage-banner').style.display = 'none';
+    document.querySelector('header').style.display = 'none';
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-form-candidato').classList.add('active');
+  }
+  // set link
+  const base = window.location.href.split('?')[0];
+  const el = document.getElementById('link-candidato');
+  if (el) el.textContent = base + '?modo=candidato';
+}
+
+function copiarLink() {
+  const base = window.location.href.split('?')[0];
+  navigator.clipboard.writeText(base + '?modo=candidato')
+    .then(() => showAlertCand('✅ Link copiado para a área de transferência!', 'success'))
+    .catch(() => showAlertCand('⚠️ Selecione e copie o link manualmente.', 'info'));
+}
+
+async function salvarCandidato() {
+  const nome  = document.getElementById('fc-nome').value.trim();
+  const cargo = document.getElementById('fc-cargo').value;
+  const area  = document.getElementById('fc-area').value;
+  if (!nome)  { showAlertCandForm('Informe o nome.', 'info'); return; }
+  if (!cargo) { showAlertCandForm('Selecione o cargo pretendido.', 'info'); return; }
+  if (!area)  { showAlertCandForm('Selecione a área.', 'info'); return; }
+  const discSel = discCandRowSels.filter(r=>r!==null).length;
+  if (discSel < 5) { showAlertCandForm('Responda ao menos 5 linhas do DISC.', 'info'); return; }
+
+  const sc = { D:0, I:0, S:0, C:0 };
+  discCandRowSels.forEach(f => { if(f) sc[f]++; });
+  const dominant = DISC_FACTORS.slice().sort((a,b)=>sc[b]-sc[a])[0];
+
+  const c = {
+    id: 'CAND'+Date.now(), nome, cargo, area, role: 'candidato',
+    disc: dominant, discScores: sc,
+    discRowSelections: [...discCandRowSels],
+    ts: new Date().toLocaleString('pt-BR'),
+  };
+  participants.push(c);
+  await saveData();
+  document.getElementById('cand-form-wrap').style.display = 'none';
+  document.getElementById('cand-obrigado').style.display = 'block';
+}
+
+function renderCandidatos() {
+  const cands = participants.filter(p => p.role === 'candidato');
+  const el = document.getElementById('cand-lista');
+  if (!el) return;
+  if (cands.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>Nenhum candidato avaliado ainda.<br>Compartilhe o link acima para receber diagnósticos.</p></div>';
+    return;
+  }
+  const rows = cands.map(c => {
+    const sc = c.discScores || {};
+    const bars = DISC_FACTORS.map(f => {
+      const pct = Math.round(((sc[f]||0)/15)*100);
+      return `<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">
+        <span style="font-size:.68rem;font-weight:700;color:${DISC_COLORS[f]};width:12px">${f}</span>
+        <div style="flex:1;height:4px;background:#EDE8DC;border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${DISC_COLORS[f]};border-radius:2px"></div>
+        </div>
+        <span style="font-size:.68rem;font-weight:700;color:${DISC_COLORS[f]};min-width:26px">${pct}%</span>
+      </div>`;
+    }).join('');
+    const discLabel = c.disc ? `<span style="font-size:.78rem;padding:3px 9px;border-radius:8px;background:${DISC_COLORS[c.disc]}18;color:${DISC_COLORS[c.disc]};font-weight:700">${c.disc} — ${DISC_LABELS[c.disc]}</span>` : '—';
+    const rec = c.disc ? DISC_RECOMENDACOES[c.disc] : null;
+    return `<tr>
+      <td style="padding:12px"><strong>${c.nome}</strong><br><span style="font-size:.72rem;color:var(--muted)">${c.cargo||''} · ${c.area||''}</span></td>
+      <td style="padding:12px">${discLabel}</td>
+      <td style="padding:12px;min-width:180px">${bars}</td>
+      <td style="padding:12px;font-size:.78rem;color:#333;max-width:260px;line-height:1.5">${rec?'<strong>🚀 Potencial:</strong> '+rec.potencial:''}</td>
+      <td style="padding:12px;font-size:.75rem;color:var(--muted)">${c.ts||''}</td>
+      <td style="padding:12px">
+        <button onclick="verDiscCandidato('${c.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.75rem;font-family:inherit;margin-bottom:4px">Ver completo</button><br>
+        <button onclick="remover('${c.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.75rem;font-family:inherit">✕ Remover</button>
+      </td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table class="tbl">
+    <thead><tr><th>Candidato</th><th>Perfil DISC</th><th>Distribuição</th><th>Potencial</th><th>Data</th><th>Ações</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function verDiscCandidato(id) {
+  const c = participants.find(x=>x.id===id);
+  if (!c) return;
+  document.getElementById('m-nome').textContent = c.nome;
+  document.getElementById('m-meta').textContent = `🔍 Candidato · ${c.cargo||''} · ${c.area||''} · ${c.ts||''}`;
+  const sc = c.discScores || {};
+  const barsHtml = DISC_FACTORS.map(f => {
+    const pct = Math.round(((sc[f]||0)/15)*100);
+    return `<div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+        <span style="font-weight:600;color:${DISC_COLORS[f]}">${f} — ${DISC_LABELS[f]}</span>
+        <span style="color:${DISC_COLORS[f]};font-weight:700">${sc[f]||0} escolhas · ${pct}%</span>
+      </div>
+      <div style="height:6px;background:#EDE8DC;border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${DISC_COLORS[f]};border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('');
+  const rec = c.disc ? DISC_RECOMENDACOES[c.disc] : null;
+  const recHtml = rec ? `
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px">🧭 Recomendações para o Líder</div>
+      ${[['💬','Como dar Feedback',rec.feedback,'#FFF8E7'],['📈','Como Desenvolver',rec.desenvolver,'#F0F4FF'],['🔥','Como Motivar',rec.motivar,'#FFF0FA'],['🚀','Potencial',rec.potencial,'#EDFBF1']]
+        .map(([ic,lb,tx,bg])=>`<div style="background:${bg};border-radius:7px;padding:10px 12px;margin-bottom:8px"><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#555;margin-bottom:4px">${ic} ${lb}</div><div style="font-size:.82rem;color:#333;line-height:1.6">${tx}</div></div>`).join('')}
+    </div>` : '';
+  document.getElementById('m-body').innerHTML = `
+    <span style="font-size:.82rem;padding:4px 12px;border-radius:10px;background:${c.disc?DISC_COLORS[c.disc]+'18':'#eee'};color:${c.disc?DISC_COLORS[c.disc]:'#666'};font-weight:700;display:inline-flex;margin-bottom:14px">
+      ${c.disc||'—'} — ${c.disc?DISC_LABELS[c.disc]:'Sem resultado'}</span>
+    <p style="font-size:.83rem;color:#555;line-height:1.6;margin-bottom:14px">${c.disc?DISC_DESC[c.disc]:''}</p>
+    ${barsHtml}${recHtml}`;
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function showAlertCand(msg, type) {
+  const el = document.getElementById('alerta-cand');
+  if (!el) return;
+  el.className = 'alert alert-'+type+' show';
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+function showAlertCandForm(msg, type) {
+  const el = document.getElementById('alerta-cand-form');
+  if (!el) return;
+  el.className = 'alert alert-'+type+' show';
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+// DISC state for candidato form (separate from employee form)
+let discCandRowSels = new Array(15).fill(null);
+let discCandStarted = false;
+
+function selectDiscCandWord(ri, factor) {
+  const prev = discCandRowSels[ri];
+  if (prev) {
+    const pb = document.getElementById(`disc-cand-${ri}-${prev}`);
+    if (pb) { pb.style.background='white'; pb.style.color='var(--text)'; pb.style.borderColor='var(--border)'; pb.style.fontWeight='400'; }
+  }
+  if (prev === factor) { discCandRowSels[ri] = null; }
+  else {
+    discCandRowSels[ri] = factor;
+    const b = document.getElementById(`disc-cand-${ri}-${factor}`);
+    if (b) { b.style.background=DISC_COLORS[factor]; b.style.color='white'; b.style.borderColor=DISC_COLORS[factor]; b.style.fontWeight='700'; }
+    if (!discCandStarted) {
+      discCandStarted = true;
+      const ba = document.getElementById('disc-cand-bars');
+      if (ba) ba.style.display = 'block';
+    }
+  }
+  // update bars
+  const sc = { D:0, I:0, S:0, C:0 };
+  discCandRowSels.forEach(f => { if(f) sc[f]++; });
+  DISC_FACTORS.forEach(f => {
+    const pct = Math.round((sc[f]/15)*100);
+    const el = document.getElementById(`cand-pct-${f}`); if(el) el.textContent=pct+'%';
+    const bar = document.getElementById(`cand-bar-${f}`); if(bar) bar.style.width=pct+'%';
+    const cnt = document.getElementById(`cand-cnt-${f}`); if(cnt) cnt.textContent=sc[f]+' escolhas';
+  });
+}
+
+// ══════════════════════════════ EXPORT / IMPORT ══════════════════════════════
+function exportarJSON() {
+  const data = JSON.stringify({ exportado: new Date().toISOString(), participants }, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lideranca-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const list = data.participants || data;
+      if (!Array.isArray(list)) throw new Error('Formato inválido');
+      if (!confirm(`Importar ${list.length} participante(s)? Os dados atuais serão substituídos.`)) return;
+      participants = list;
+      saveData();
+      showAlert('✅ Dados importados com sucesso!','success');
+      renderPainel();
+    } catch(err) {
+      alert('Erro ao importar: arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════ LÍDERES PRÉ-CADASTRADOS ══════════════════════
+const LIDER_KEY = 'lideranca_lideres_v1';
+let lideresCadastrados = [];
+let temSuperior = null; // null = não escolheu, false = sem superior, true = tem superior
+
+function loadLideres() { /* data loaded together in loadData() */ }
+
+function saveLideres() {
+  try { localStorage.setItem(LIDER_KEY, JSON.stringify(lideresCadastrados)); } catch(e) {}
+}
+
+function selSuperior(hasSup) {
+  temSuperior = hasSup;
+  document.getElementById('sup-nao').classList.toggle('sel', !hasSup);
+  document.getElementById('sup-sim').classList.toggle('sel',  hasSup);
+  document.getElementById('fl-superior-wrap').style.display = hasSup ? 'block' : 'none';
+  if (!hasSup) document.getElementById('fl-superior').value = '';
+}
+
+function salvarLider() {
+  const nome  = document.getElementById('fl-nome').value.trim();
+  const cargo = document.getElementById('fl-cargo').value.trim();
+  const area  = document.getElementById('fl-area').value.trim();
+  if (!nome)  { showAlertLider('Informe o nome do líder.','info'); return; }
+  if (!cargo) { showAlertLider('Informe o cargo do líder.','info'); return; }
+  if (temSuperior === null) { showAlertLider('Indique se o líder possui ou não um superior.','info'); return; }
+  const supId = temSuperior ? document.getElementById('fl-superior').value : null;
+  if (temSuperior && !supId) { showAlertLider('Selecione o superior hierárquico.','info'); return; }
+  const l = { id:'L'+Date.now().toString(), nome, cargo, area, superiorId: supId||null, temDiagnostico: false };
+  lideresCadastrados.push(l);
+  saveLideres();
+  showAlertLider('✅ '+nome+' adicionado com sucesso!','success');
+  limparLider();
+  renderLideres();
+  updateAllLiderSelects();
+}
+
+function limparLider() {
+  document.getElementById('fl-nome').value  = '';
+  document.getElementById('fl-cargo').value = '';
+  document.getElementById('fl-area').value  = '';
+  document.getElementById('fl-superior').value = '';
+  document.getElementById('fl-superior-wrap').style.display = 'none';
+  document.getElementById('sup-nao').classList.remove('sel');
+  document.getElementById('sup-sim').classList.remove('sel');
+  temSuperior = null;
+}
+
+function removerLider(id) {
+  if (!confirm('Remover este líder? Participantes vinculados a ele perderão o vínculo.')) return;
+  lideresCadastrados = lideresCadastrados.filter(l => l.id !== id);
+  // remove vínculo de participantes
+  participants.forEach(p => { if (p.liderDiretoId === id) p.liderDiretoId = null; });
+  saveData(); saveLideres();
+  renderLideres();
+  updateAllLiderSelects();
+}
+
+function iniciarDiagnosticoLider(id) {
+  const l = lideresCadastrados.find(x => x.id === id);
+  if (!l) return;
+  // Pre-fill cadastro form with leader data
+  showPage('cadastro', document.querySelectorAll('.nav-btn')[0]);
+  setTimeout(() => {
+    document.getElementById('f-nome').value = l.nome;
+    document.getElementById('f-area').value = l.area || '';
+    // select Líder role
+    const roleBtns = document.querySelectorAll('.role-btn');
+    roleBtns.forEach(b => b.classList.remove('sel'));
+    roleBtns[0].classList.add('sel');
+    selectedRole = 'lider';
+    // set superior
+    updateLiderSelect();
+    if (l.superiorId) {
+      setTimeout(() => { document.getElementById('f-lider').value = l.superiorId; }, 100);
+    }
+    // store lider id for linking after save
+    window._diagnosticoLiderId = id;
+    showAlert('📋 Dados de '+l.nome+' preenchidos. Complete o diagnóstico e salve.','info');
+  }, 100);
+}
+
+function renderLideres() {
+  const el = document.getElementById('lideres-lista');
+  if (!el) return;
+  if (lideresCadastrados.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🎯</div><p>Nenhum líder cadastrado ainda.<br>Use o formulário acima para adicionar líderes.</p></div>';
+    return;
+  }
+  const rows = lideresCadastrados.map(l => {
+    const superior = l.superiorId ? (lideresCadastrados.find(x=>x.id===l.superiorId) || participants.find(x=>x.id===l.superiorId)) : null;
+    const diagP = participants.find(p => p.nome === l.nome && p.role === 'lider');
+    const supCell = l.superiorId
+      ? `<span style="font-size:.82rem">${superior ? superior.nome : '<em style="color:var(--muted)">—</em>'}</span>`
+      : `<span style="font-size:.75rem;padding:3px 9px;border-radius:10px;background:#F0EBE0;color:var(--muted);font-weight:600">🏆 Topo</span>`;
+    const status = diagP
+      ? `<span style="font-size:.75rem;padding:3px 9px;border-radius:10px;background:#EDFBF1;color:#1A5C35;font-weight:700">✅ Diagnóstico completo</span>`
+      : `<button onclick="iniciarDiagnosticoLider('${l.id}')" style="font-size:.75rem;padding:4px 11px;border-radius:5px;border:1.5px solid var(--gold);background:#FFF8E7;color:var(--gold);cursor:pointer;font-weight:700;font-family:inherit">📋 Iniciar diagnóstico</button>`;
+    return `<tr>
+      <td style="padding:11px 12px"><strong>${l.nome}</strong><br><span style="font-size:.75rem;color:var(--muted)">${l.area||''}</span></td>
+      <td style="padding:11px 12px;font-size:.85rem">${l.cargo}</td>
+      <td style="padding:11px 12px">${supCell}</td>
+      <td style="padding:11px 12px">${status}</td>
+      <td style="padding:11px 12px;white-space:nowrap">
+        <button onclick="removerLider('${l.id}')" title="Deletar líder"
+          style="padding:5px 13px;border-radius:5px;border:1.5px solid #F5C6C6;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.8rem;font-weight:700;font-family:inherit">
+          🗑 Deletar
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table class="tbl">
+    <thead><tr><th>Nome</th><th>Cargo</th><th>Superior</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function updateSuperiorSelect() {
+  const sel = document.getElementById('fl-superior');
+  if (!sel) return;
+  const currentVal = sel.value;
+
+  const fixos = ['Rodrigo Zagonel','Catia Falcao','Paulo Vinicio','Gustavo Costa','Rafael Magno','Gustavo Vianna','Adriano Rodrigues','Filipe Fuchs','Guilherme Cristo','Raul Aragão','Patricia de Oliveira','Alberto de Oliveira','Mario Rodolfo','Magno Alves'];
+
+  sel.innerHTML = '<option value="">— Selecione o superior —</option>';
+
+  const gFixo = document.createElement('optgroup');
+  gFixo.label = '👤 Líderes da Organização';
+  fixos.forEach(nome => {
+    const o = document.createElement('option');
+    o.value = nome; o.textContent = nome;
+    if (nome === currentVal) o.selected = true;
+    gFixo.appendChild(o);
+  });
+  sel.appendChild(gFixo);
+
+  // also show pre-registered leaders not in fixed list
+  const extras = lideresCadastrados.filter(l => !fixos.includes(l.nome));
+  if (extras.length) {
+    const gExtra = document.createElement('optgroup');
+    gExtra.label = '🎯 Líderes Cadastrados';
+    extras.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l.id; o.textContent = l.nome + (l.cargo ? ' — ' + l.cargo : '');
+      if (l.id === currentVal) o.selected = true;
+      gExtra.appendChild(o);
+    });
+    sel.appendChild(gExtra);
+  }
+}
+
+function updateAllLiderSelects() {
+  updateLiderSelect();
+  updateSuperiorSelect();
+}
+
+function showAlertLider(msg, type) {
+  const el = document.getElementById('alerta-lider');
+  if (!el) return;
+  el.className = 'alert alert-'+type+' show';
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+
+function carregarLogo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result;
+    localStorage.setItem('lideranca_logo', base64);
+    aplicarLogo(base64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function aplicarLogo(base64) {
+  const img = document.getElementById('logo-img');
+  const placeholder = document.getElementById('logo-placeholder');
+  img.src = base64;
+  img.style.display = 'block';
+  placeholder.style.display = 'none';
+}
+
+function carregarLogoSalva() {
+  const saved = localStorage.getItem('lideranca_logo');
+  if (saved) aplicarLogo(saved);
+}
+
+// ══════════════════════════════ START ════════════════════════════════════════
+(async () => {
+  init();           // build UI immediately
+  carregarLogoSalva();
+  showSyncStatus('carregando');
+
+  // check if keys are configured
+  if (JSONBIN_ID === 'SEU_BIN_ID_AQUI') {
+    showSyncStatus('erro');
+    document.getElementById('sync-status').innerHTML = '⚙️ Configure o JSONBin nas instruções abaixo';
+    document.getElementById('sync-status').style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.78rem;padding:5px 12px;border-radius:6px;background:#FFF8E7;color:#92700A;font-weight:600';
+    // use local fallback
+    try {
+      const raw = localStorage.getItem('pda_fallback');
+      if (raw) { const d = JSON.parse(raw); participants = d.participants||[]; lideresCadastrados = d.lideres||[]; }
+    } catch(_) {}
+  } else {
+    await loadData();
+  }
+  updateLiderSelect();
+  updateSuperiorSelect();
+})();
+</script>
+</body>
+</html>
