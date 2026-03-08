@@ -222,6 +222,7 @@ textarea.fi{resize:vertical;min-height:72px}
   </div>
   <nav class="nav">
     <button class="nav-btn active" onclick="showPage('inicio',this)">🏠 Início</button>
+    <button class="nav-btn" onclick="showPage('lideres',this)">👥 Líderes</button>
     <button class="nav-btn" onclick="showPage('cadastro',this)">✏️ Diagnóstico</button>
     <button class="nav-btn" onclick="showPage('mapa',this)">🗺️ Mapa</button>
     <button class="nav-btn" onclick="showPage('painel',this)">📊 Painel</button>
@@ -238,12 +239,12 @@ textarea.fi{resize:vertical;min-height:72px}
     <div class="card" style="text-align:center;cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''" onclick="irParaDiagnostico('lider')">
       <div style="font-size:2.5rem;margin-bottom:10px">🎯</div>
       <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:6px">Sou Líder</div>
-      <div style="font-size:.8rem;color:var(--muted);line-height:1.5">Faça seu diagnóstico completo de Temperamento e DISC para compreender seu perfil de liderança.</div>
+      <div style="font-size:.8rem;color:var(--muted);line-height:1.5">Faça seu diagnóstico de Temperamento e DISC. Você tem um líder superior e liderados vinculados a você.</div>
     </div>
-    <div class="card" style="text-align:center;cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''" onclick="irParaDiagnostico('liderado')">
+    <div class="card" style="text-align:center;cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''" onclick="irParaDiagnostico('staff')">
       <div style="font-size:2.5rem;margin-bottom:10px">🌱</div>
-      <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:6px">Sou Liderado</div>
-      <div style="font-size:.8rem;color:var(--muted);line-height:1.5">Faça seu diagnóstico de Temperamento e DISC para alinhar com seu líder e potencializar seu crescimento.</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:6px">Sou Staff / Colaborador</div>
+      <div style="font-size:.8rem;color:var(--muted);line-height:1.5">Faça seu diagnóstico de Temperamento e DISC. Você reporta a um líder e não possui liderados diretos.</div>
     </div>
     <div class="card" style="text-align:center;cursor:pointer;transition:transform .2s;border:2px dashed var(--border)" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''" onclick="entrarComoCandidato()">
       <div style="font-size:2.5rem;margin-bottom:10px">🔍</div>
@@ -275,6 +276,58 @@ textarea.fi{resize:vertical;min-height:72px}
   </div>
 </div>
 
+<!-- ══════════════════════════ LÍDERES ═════════════════════════════════════ -->
+<div class="page" id="page-lideres">
+  <div class="page-title">Cadastro de Líderes</div>
+  <p class="page-desc">Gerencie a lista oficial de líderes da organização. Apenas gestores podem cadastrar, editar ou excluir.</p>
+  <div id="alerta-lid" class="alert"></div>
+
+  <!-- FORMULÁRIO CADASTRO / EDIÇÃO -->
+  <div class="card" id="form-lider-card">
+    <div class="card-title" id="form-lider-titulo">➕ Novo Líder</div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="fg"><label>Nome completo</label><input class="fi" id="fl-nome" placeholder="Nome do líder"></div>
+      <div class="fg">
+        <label>Cargo</label>
+        <select class="fi" id="fl-cargo">
+          <option value="">— Selecione —</option>
+          <option>Diretor</option><option>Gerente Executivo</option><option>Gerente</option>
+          <option>Coordenador</option><option>Supervisor</option><option>Analista</option>
+          <option>Técnico</option><option>Operador</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="fg">
+        <label>Área / Setor</label>
+        <select class="fi" id="fl-area">
+          <option value="">— Selecione —</option>
+          <option>Manutenção</option><option>Colheita</option><option>Silvicultura</option>
+          <option>Logística</option><option>Viveiro</option><option>Operações</option>
+          <option>Gente e Gestão</option><option>Segurança do Trabalho</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Líder Superior (hierarquia)</label>
+        <select class="fi" id="fl-superior">
+          <option value="">— Topo da hierarquia —</option>
+        </select>
+      </div>
+    </div>
+    <input type="hidden" id="fl-edit-id">
+    <div class="btn-row">
+      <button class="btn btn-dark" onclick="salvarLider()">💾 Salvar Líder</button>
+      <button class="btn btn-outline" onclick="cancelarEdicaoLider()">↩ Cancelar</button>
+    </div>
+  </div>
+
+  <!-- LISTA DE LÍDERES -->
+  <div class="card">
+    <div class="card-title">📋 Líderes Cadastrados</div>
+    <div id="lista-lideres-wrap"></div>
+  </div>
+</div>
+
 <!-- ══════════════════════════ DIAGNÓSTICO ═════════════════════════════════ -->
 <div class="page" id="page-cadastro">
   <div class="page-title">Diagnóstico</div>
@@ -290,7 +343,7 @@ textarea.fi{resize:vertical;min-height:72px}
         <label>Função</label>
         <div class="role-row" style="margin-top:4px">
           <button class="role-btn" id="rbtn-lider" onclick="selRole(this,'lider')">🎯 Líder</button>
-          <button class="role-btn" id="rbtn-liderado" onclick="selRole(this,'liderado')">🌱 Liderado</button>
+          <button class="role-btn" id="rbtn-staff" onclick="selRole(this,'staff')">🌱 Staff / Colaborador</button>
         </div>
       </div>
     </div>
@@ -314,15 +367,17 @@ textarea.fi{resize:vertical;min-height:72px}
         </select>
       </div>
     </div>
-    <!-- Líder Direto (só aparece se liderado) -->
-    <div id="lider-direto-section" style="display:none">
-      <div class="form-row">
-        <div class="fg">
-          <label>Líder Direto</label>
-          <select class="fi" id="f-lider"><option value="">— Selecione seu líder —</option></select>
-        </div>
-        <div class="fg" style="align-self:flex-end">
-          <div style="font-size:.75rem;color:var(--muted);padding:10px 0">Selecione o líder ao qual você reporta diretamente.</div>
+    <!-- Líder Direto — aparece para todos (lider tem lider superior; staff tem lider) -->
+    <div class="form-row">
+      <div class="fg">
+        <label>Líder Direto / Superior</label>
+        <select class="fi" id="f-lider">
+          <option value="">— Topo da hierarquia (sem líder superior) —</option>
+        </select>
+      </div>
+      <div class="fg" style="align-self:flex-end">
+        <div style="font-size:.75rem;color:var(--muted);padding:8px 0;line-height:1.55">
+          Selecione seu líder direto. Se você está no topo da hierarquia, deixe em branco.
         </div>
       </div>
     </div>
@@ -509,8 +564,8 @@ textarea.fi{resize:vertical;min-height:72px}
 // ════════════════════════════════════════════════════════════════════════════
 // CONFIG — SUBSTITUA COM SEUS VALORES DO JSONBIN
 // ════════════════════════════════════════════════════════════════════════════
-const JSONBIN_ID = "69adb89d43b1c97be9c1b980";
-const JSONBIN_KEY = "$2a$10$5Q9/pUq5WyX/gKrVGzHy6epLMILLOeatAG.nEgXW8fRlnvo9T5k/G";
+const JSONBIN_ID  = '69addd78d0ea881f40fd87eb';
+const JSONBIN_KEY = '$2a$10$5Q9/pUq5WyX/gKrVGzHy6epLMILLOeatAG.nEgXW8fRlnvo9T5k/G';
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
 const SENHA_GESTOR = 'suzano2025'; // altere para sua senha
 
@@ -646,6 +701,7 @@ const ACOES = {
 // STATE
 // ════════════════════════════════════════════════════════════════════════════
 let participants = [];
+let lideresCad = []; // lista oficial de líderes cadastrados pelo gestor
 let selectedRole = null;
 let rowSel = new Array(15).fill(null);
 let discSel = new Array(15).fill(null);
@@ -667,10 +723,11 @@ async function loadData(){
     if(!r.ok)throw new Error('status '+r.status);
     const d=await r.json();
     participants=d.participants||[];
+    lideresCad=d.lideresCad||[];
     showSync('✓ sincronizado');
   }catch(e){
     console.warn('JSONBin falhou, usando localStorage',e);
-    try{participants=JSON.parse(localStorage.getItem('pda_data')||'[]')}catch{}
+    try{const s=JSON.parse(localStorage.getItem('pda_data')||'{}');participants=s.participants||[];lideresCad=s.lideresCad||[];}catch{}
     showSync('⚠ offline');
   }
 }
@@ -679,12 +736,13 @@ async function saveData(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
     showSync('⟳ salvando...');
+    const payload={participants,lideresCad};
     try{
-      await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify({participants})});
-      localStorage.setItem('pda_data',JSON.stringify(participants));
+      await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(payload)});
+      localStorage.setItem('pda_data',JSON.stringify(payload));
       showSync('✓ salvo');
     }catch(e){
-      localStorage.setItem('pda_data',JSON.stringify(participants));
+      localStorage.setItem('pda_data',JSON.stringify(payload));
       showSync('⚠ salvo local');
     }
   },600);
@@ -731,10 +789,13 @@ function showPage(name,btn){
   if(name==='mapa')renderMapa();
   if(name==='selecao')renderSelecao();
   if(name==='cadastro')updateLiderSelect();
+  if(name==='lideres'){renderListaLideres();updateSuperiorSelect();}
 }
 function irParaDiagnostico(role){
-  showPage('cadastro',document.querySelector('.nav-btn:nth-child(2)'));
-  selRole(document.getElementById('rbtn-'+role),role);
+  showPage('cadastro',document.querySelectorAll('.nav-btn')[2]);
+  const btnId=role==='lider'?'rbtn-lider':'rbtn-staff';
+  const btn=document.getElementById(btnId);
+  if(btn)selRole(btn,role);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -822,16 +883,34 @@ function selRole(btn,role){
   document.querySelectorAll('#page-cadastro .role-btn').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
   selectedRole=role;
-  document.getElementById('lider-direto-section').style.display=role==='liderado'?'block':'none';
   updateLiderSelect();
 }
-function updateLiderSelect(){
+function updateLiderSelect(excludeId){
   const sel=document.getElementById('f-lider');if(!sel)return;
-  sel.innerHTML='<option value="">— Sem líder vinculado —</option>';
-  const lideres=participants.filter(p=>p.role==='lider');
-  if(lideres.length){
-    const g=document.createElement('optgroup');g.label='🎯 Líderes';
-    lideres.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=l.nome+(l.cargo?' — '+l.cargo:'');g.appendChild(o);});
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Topo da hierarquia (sem líder superior) —</option>';
+  // lideres do cadastro oficial
+  const cadastrados=lideresCad.filter(l=>l.id!==excludeId);
+  if(cadastrados.length){
+    const g=document.createElement('optgroup');g.label='🎯 Líderes cadastrados';
+    cadastrados.forEach(l=>{
+      const o=document.createElement('option');o.value='CAD-'+l.id;
+      o.textContent=l.nome+(l.cargo?' — '+l.cargo:'')+(l.area?' · '+l.area:'');
+      if(prev==='CAD-'+l.id)o.selected=true;
+      g.appendChild(o);
+    });
+    sel.appendChild(g);
+  }
+  // lideres que já fizeram diagnóstico
+  const diagLideres=participants.filter(p=>p.role==='lider'&&p.id!==excludeId);
+  if(diagLideres.length){
+    const g=document.createElement('optgroup');g.label='✅ Líderes (diagnóstico completo)';
+    diagLideres.forEach(l=>{
+      const o=document.createElement('option');o.value=l.id;
+      o.textContent=l.nome+(l.cargo?' — '+l.cargo:'')+(l.area?' · '+l.area:'');
+      if(prev===l.id)o.selected=true;
+      g.appendChild(o);
+    });
     sel.appendChild(g);
   }
 }
@@ -846,14 +925,26 @@ function salvar(){
   if(!nome){showAlertCad('Informe o nome.','info');return;}
   if(!cargo){showAlertCad('Selecione o cargo.','info');return;}
   if(!area){showAlertCad('Selecione a área.','info');return;}
-  if(!selectedRole){showAlertCad('Selecione a função: Líder ou Liderado.','info');return;}
+  if(!selectedRole){showAlertCad('Selecione a função: Líder ou Staff/Colaborador.','info');return;}
   if(rowSel.filter(r=>r!==null).length<5){showAlertCad('Responda ao menos 5 linhas do Temperamento.','info');return;}
   if(discSel.filter(r=>r!==null).length<5){showAlertCad('Responda ao menos 5 linhas do DISC.','info');switchTab('disc');return;}
   const tsc=getScores(rowSel,TEMPS);
   const dsc=getScores(discSel,DISC_F);
+  const liderVal=document.getElementById('f-lider').value||null;
+  // resolve líder nome/cargo para exibição
+  let liderNome='',liderCargo='';
+  if(liderVal){
+    if(liderVal.startsWith('CAD-')){
+      const cad=lideresCad.find(l=>'CAD-'+l.id===liderVal);
+      if(cad){liderNome=cad.nome;liderCargo=cad.cargo||'';}
+    } else {
+      const lp=participants.find(p=>p.id===liderVal);
+      if(lp){liderNome=lp.nome;liderCargo=lp.cargo||'';}
+    }
+  }
   const p={
     id:Date.now().toString(),nome,cargo,area,role:selectedRole,
-    liderDiretoId:document.getElementById('f-lider').value||null,
+    liderDiretoId:liderVal,liderNome,liderCargo,
     temperamento:getDominant(tsc,TEMPS),scores:tsc,rowSel:[...rowSel],
     disc:getDominant(dsc,DISC_F),discScores:dsc,discRowSel:[...discSel],
     talento:document.getElementById('f-talento').value.trim(),
@@ -873,13 +964,13 @@ function limpar(){
   document.getElementById('f-cargo').value='';document.getElementById('f-area').value='';
   selectedRole=null;
   document.querySelectorAll('#page-cadastro .role-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('lider-direto-section').style.display='none';
   rowSel=new Array(15).fill(null);discSel=new Array(15).fill(null);
   tempRef.v=false;discRef.v=false;
   document.querySelectorAll('[id^="tw-"],[id^="dw-"]').forEach(b=>{b.style.background='white';b.style.color='var(--text)';b.style.borderColor='var(--border)';b.style.fontWeight='400';});
   document.getElementById('bars-area').style.display='none';
   document.getElementById('disc-bars-area').style.display='none';
   updateTempBars();updateDiscBars();
+  updateLiderSelect();
 }
 
 async function salvarCandidato(){
@@ -914,25 +1005,157 @@ function showAlertCad(m,t){showAlert('alerta-cad',m,t);}
 function showAlertCandExt(m,t){showAlert('alerta-cand-ext',m,t);}
 
 // ════════════════════════════════════════════════════════════════════════════
+// LÍDERES CRUD
+// ════════════════════════════════════════════════════════════════════════════
+function updateSuperiorSelect(excludeId){
+  const sel=document.getElementById('fl-superior');if(!sel)return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Topo da hierarquia —</option>';
+  lideresCad.filter(l=>l.id!==excludeId).forEach(l=>{
+    const o=document.createElement('option');o.value=l.id;
+    o.textContent=l.nome+(l.cargo?' — '+l.cargo:'');
+    if(prev===l.id)o.selected=true;
+    sel.appendChild(o);
+  });
+}
+
+function salvarLider(){
+  const nome=document.getElementById('fl-nome').value.trim();
+  const cargo=document.getElementById('fl-cargo').value;
+  const area=document.getElementById('fl-area').value;
+  const superiorId=document.getElementById('fl-superior').value||null;
+  const editId=document.getElementById('fl-edit-id').value;
+  if(!nome){showAlert('alerta-lid','Informe o nome do líder.','info');return;}
+  if(!cargo){showAlert('alerta-lid','Selecione o cargo.','info');return;}
+  if(!area){showAlert('alerta-lid','Selecione a área.','info');return;}
+  if(editId){
+    const idx=lideresCad.findIndex(l=>l.id===editId);
+    if(idx>-1){lideresCad[idx]={...lideresCad[idx],nome,cargo,area,superiorId};}
+    showAlert('alerta-lid','✅ Líder atualizado com sucesso!','success');
+  } else {
+    lideresCad.push({id:'LID'+Date.now(),nome,cargo,area,superiorId});
+    showAlert('alerta-lid','✅ Líder cadastrado com sucesso!','success');
+  }
+  saveData();
+  cancelarEdicaoLider();
+  renderListaLideres();
+  updateSuperiorSelect();
+}
+
+function cancelarEdicaoLider(){
+  document.getElementById('fl-nome').value='';
+  document.getElementById('fl-cargo').value='';
+  document.getElementById('fl-area').value='';
+  document.getElementById('fl-superior').value='';
+  document.getElementById('fl-edit-id').value='';
+  document.getElementById('form-lider-titulo').textContent='➕ Novo Líder';
+}
+
+function editarLider(id){
+  const l=lideresCad.find(x=>x.id===id);if(!l)return;
+  document.getElementById('fl-nome').value=l.nome||'';
+  document.getElementById('fl-cargo').value=l.cargo||'';
+  document.getElementById('fl-area').value=l.area||'';
+  document.getElementById('fl-edit-id').value=l.id;
+  document.getElementById('form-lider-titulo').textContent='✏️ Editar Líder: '+l.nome;
+  updateSuperiorSelect(l.id);
+  document.getElementById('fl-superior').value=l.superiorId||'';
+  document.getElementById('form-lider-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function excluirLider(id){
+  const l=lideresCad.find(x=>x.id===id);
+  if(!confirm(`Excluir "${l?.nome}"? Diagnósticos vinculados não serão removidos.`))return;
+  lideresCad=lideresCad.filter(x=>x.id!==id);
+  saveData();renderListaLideres();updateSuperiorSelect();
+  showAlert('alerta-lid','Líder removido.','info');
+}
+
+function renderListaLideres(){
+  const wrap=document.getElementById('lista-lideres-wrap');if(!wrap)return;
+  if(!lideresCad.length){
+    wrap.innerHTML='<div class="empty"><div class="empty-icon">👥</div><p>Nenhum líder cadastrado ainda.<br>Use o formulário acima para adicionar o primeiro líder.</p></div>';
+    return;
+  }
+  // find superior name
+  const supNome=id=>id?(lideresCad.find(l=>l.id===id)?.nome||'—'):'—';
+  // check if has diagnostic
+  const temDiag=id=>participants.some(p=>p.role==='lider'&&(p.liderDiretoId==='CAD-'+id||p.nome===lideresCad.find(l=>l.id===id)?.nome));
+  wrap.innerHTML=`<table class="tbl"><thead><tr>
+    <th>Nome</th><th>Cargo</th><th>Área</th><th>Superior</th><th>Diagnóstico</th><th>Ações</th>
+  </tr></thead><tbody>`+
+  lideresCad.map(l=>`<tr>
+    <td><strong>${l.nome}</strong></td>
+    <td style="font-size:.82rem">${l.cargo||'—'}</td>
+    <td style="font-size:.82rem">${l.area||'—'}</td>
+    <td style="font-size:.82rem;color:var(--muted)">${supNome(l.superiorId)}</td>
+    <td>${participants.find(p=>p.liderDiretoId==='CAD-'+l.id||p.id===l.id)
+      ?'<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#EAF7F0;color:#1A5C35;font-weight:700">✅ Completo</span>'
+      :'<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#FEF3E8;color:#7B3D00;font-weight:700">⏳ Pendente</span>'
+    }</td>
+    <td style="display:flex;gap:6px;flex-wrap:wrap">
+      <button onclick="editarLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.73rem;font-family:inherit">✏️ Editar</button>
+      <button onclick="excluirLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.73rem;font-family:inherit">✕ Excluir</button>
+    </td>
+  </tr>`).join('')+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAPA MENTAL
 // ════════════════════════════════════════════════════════════════════════════
 function renderMapa(){
   const wrap=document.getElementById('mapa-wrap');if(!wrap)return;
+  // Líderes = aqueles com diagnóstico completo (role==='lider')
   const lideres=participants.filter(p=>p.role==='lider'&&p.temperamento);
-  if(!lideres.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><p>Nenhum líder com diagnóstico ainda.<br>Complete o diagnóstico de pelo menos um líder.</p></div>`;return;}
-  wrap.innerHTML=lideres.map(l=>buildMapaBloco(l)).join('');
+  // Também líderes cadastrados que ainda não fizeram diagnóstico
+  const lideresNoDiag=lideresCad.filter(l=>!lideres.some(p=>p.liderDiretoId==='CAD-'+l.id||p.nome===l.nome));
+  if(!lideres.length&&!lideresNoDiag.length){
+    wrap.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><p>Nenhum líder com diagnóstico ainda.<br>Complete o diagnóstico de pelo menos um líder na aba <strong>Diagnóstico</strong>.</p></div>`;
+    return;
+  }
+  // Show líderes without diag as grayed stubs
+  const stubsHtml=lideresNoDiag.map(l=>`
+    <div class="mapa-bloco"><div class="card" style="opacity:.55">
+      <div style="display:flex;justify-content:center">
+        <div class="mapa-lider-node" style="background:#888;cursor:default">
+          <div class="mn-nome">${l.nome}</div>
+          <div class="mn-cargo">${l.cargo||''} ${l.area?'· '+l.area:''}</div>
+          <div style="font-size:.68rem;opacity:.7;margin-top:6px">⏳ Diagnóstico pendente</div>
+        </div>
+      </div>
+    </div></div>`).join('');
+  wrap.innerHTML=lideres.map(l=>buildMapaBloco(l)).join('')+stubsHtml;
+}
+
+// Resolve lider vinculado a um participante (pode ser CAD-id ou id de participant)
+function resolverLider(p){
+  if(!p.liderDiretoId)return null;
+  if(p.liderDiretoId.startsWith('CAD-')){
+    const cadId=p.liderDiretoId.slice(4);
+    return lideresCad.find(l=>l.id===cadId)||null;
+  }
+  return participants.find(x=>x.id===p.liderDiretoId)||null;
 }
 
 function tempBadge(t){if(!t)return'';return`<span class="mn-badge" style="background:${COLORS[t]}28;color:${COLORS[t]}">${LABELS[t]}</span>`;}
 function discBadge(d){if(!d)return'';return`<span class="mn-badge" style="background:${DISC_COLORS[d]}28;color:${DISC_COLORS[d]}">${d} — ${DISC_LABELS[d]}</span>`;}
 
 function buildMapaBloco(lider){
-  const liderados=participants.filter(p=>p.liderDiretoId===lider.id);
+  // liderados = anyone (staff or lider) whose liderDiretoId points to this lider
+  const liderados=participants.filter(p=>
+    p.liderDiretoId===lider.id || p.liderDiretoId==='CAD-'+lider.id
+  );
+  // Superior do líder
+  const superior=resolverLider(lider);
+  const superiorHtml=superior
+    ?`<div style="text-align:center;margin-bottom:8px;font-size:.72rem;color:#B0A890">↑ Superior: <strong>${superior.nome||superior.nome}</strong>${superior.cargo?' · '+superior.cargo:''}</div>`
+    :'';
   const lideradosHtml=liderados.length===0
-    ?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">Nenhum liderado vinculado ainda</div>`
+    ?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">Nenhum colaborador/liderado vinculado ainda</div>`
     :`<div class="mapa-liderados-row">${liderados.map(l=>buildLideradoCol(l,lider.id)).join('')}</div>`;
   return`<div class="mapa-bloco">
     <div class="card" style="overflow:visible">
+      ${superiorHtml}
       <div style="display:flex;justify-content:center">
         <div class="mapa-lider-node" id="mlider-${lider.id}" onclick="toggleLiderDetalhe('${lider.id}')" style="cursor:pointer">
           <div class="mn-nome">${lider.nome}</div>
@@ -949,11 +1172,15 @@ function buildMapaBloco(lider){
 }
 
 function buildLideradoCol(lid,liderId){
+  const roleBadge=lid.role==='lider'
+    ?`<span style="font-size:.62rem;padding:1px 6px;border-radius:4px;background:#1A3A5C22;color:#1A3A5C;font-weight:700;margin-top:3px;display:inline-block">🎯 Líder</span>`
+    :`<span style="font-size:.62rem;padding:1px 6px;border-radius:4px;background:#27AE6022;color:#1A5C35;font-weight:700;margin-top:3px;display:inline-block">🌱 Staff</span>`;
   return`<div class="mapa-liderado-col">
     <div class="mapa-node" id="mnode-${lid.id}" onclick="toggleLideradoDetalhe('${lid.id}','${liderId}')">
       <div class="mln-nome">${lid.nome}</div>
       <div class="mln-cargo">${lid.cargo||lid.area||''}</div>
-      <div class="mln-badges">${tempBadge(lid.temperamento)}${discBadge(lid.disc)}</div>
+      ${roleBadge}
+      <div class="mln-badges" style="margin-top:5px">${tempBadge(lid.temperamento)}${discBadge(lid.disc)}</div>
     </div>
     <div id="mdet-${lid.id}" style="display:none"></div>
   </div>`;
@@ -1029,13 +1256,13 @@ function buildPerfilComCorrelacao(lid,lider){
 function renderPainel(){
   const all=participants.filter(p=>p.role!=='candidato');
   const lideres=all.filter(p=>p.role==='lider');
-  const liderados=all.filter(p=>p.role==='liderado');
+  const staffs=all.filter(p=>p.role==='staff');
   const counts={colerico:0,melancolico:0,sanguineo:0,fleumatico:0};
   all.forEach(p=>{if(p.temperamento)counts[p.temperamento]++;});
   const dominant=TEMPS.slice().sort((a,b)=>counts[b]-counts[a])[0];
   document.getElementById('stats').innerHTML=[
     {num:all.length,label:'Participantes'},{num:lideres.length,label:'Líderes'},
-    {num:liderados.length,label:'Liderados'},{num:all.length>0?LABELS[dominant].slice(0,6)+'…':'—',label:'Temp. Dominante'},
+    {num:staffs.length,label:'Staff/Colab.'},{num:all.length>0?LABELS[dominant].slice(0,6)+'…':'—',label:'Temp. Dominante'},
   ].map(s=>`<div class="stat"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
   const tot=all.length||1;
   document.getElementById('legend').innerHTML=TEMPS.map(t=>`<div class="legend-item"><div class="ldot" style="background:${COLORS[t]}"></div><span style="width:90px">${LABELS[t]}</span><div class="lbar-track"><div class="lbar-fill" style="background:${COLORS[t]};width:${Math.round((counts[t]/tot)*100)}%"></div></div><span class="lcount">${counts[t]}</span><span style="font-size:.73rem;color:var(--muted);min-width:30px">${Math.round((counts[t]/tot)*100)}%</span></div>`).join('');
@@ -1043,19 +1270,24 @@ function renderPainel(){
   if(all.length===0){tw.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Nenhum participante ainda.</p></div>';return;}
   tw.innerHTML=`<table class="tbl"><thead><tr><th>Nome</th><th>Função</th><th>Temperamento / DISC</th><th>Líder Direto</th><th>Talento</th><th>Ações</th></tr></thead><tbody>`+
   all.map(p=>{
-    const lider=p.liderDiretoId?participants.find(x=>x.id===p.liderDiretoId):null;
+    const lider=resolverLider(p);
+    const liderText=lider?(lider.nome||lider.nome)+(lider.cargo?' · '+lider.cargo:''):'<em style="color:var(--muted)">Topo hierarquia</em>';
+    const roleLabel=p.role==='lider'?'🎯 Líder':'🌱 Staff/Colab.';
     return`<tr><td><strong>${p.nome}</strong><br><span style="font-size:.7rem;color:var(--muted)">${p.cargo||''} · ${p.area||''}</span></td>
-      <td>${p.role==='lider'?'🎯 Líder':'🌱 Liderado'}</td>
+      <td>${roleLabel}</td>
       <td><span class="badge ${p.temperamento}">${LABELS[p.temperamento]||'—'}</span>${p.disc?`<br><span style="font-size:.7rem;padding:2px 7px;border-radius:6px;background:${DISC_COLORS[p.disc]}18;color:${DISC_COLORS[p.disc]};font-weight:700;margin-top:2px;display:inline-block">${p.disc} — ${DISC_LABELS[p.disc]}</span>`:''}</td>
-      <td style="font-size:.82rem">${lider?`<strong>${lider.nome}</strong>`:'<em style="color:var(--muted)">—</em>'}</td>
+      <td style="font-size:.82rem">${liderText}</td>
       <td style="font-size:.76rem;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.talento||'—'}</td>
       <td><button onclick="abrirModal('${p.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.73rem;font-family:inherit;margin-right:4px">Ver</button><button onclick="remover('${p.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.73rem;font-family:inherit">✕</button></td>
     </tr>`;
   }).join('')+'</tbody></table>';
-  // CORRELAÇÕES
+  // CORRELAÇÕES — pares onde um tem líder direto com diagnóstico completo
   const corrWrap=document.getElementById('corr-wrap');
   const pares=[];
-  liderados.forEach(lid=>{const lider=lideres.find(l=>l.id===lid.liderDiretoId);if(lider&&lider.temperamento&&lid.temperamento)pares.push({lider,lid});});
+  all.forEach(p=>{
+    const lider=p.liderDiretoId?participants.find(l=>l.role==='lider'&&(l.id===p.liderDiretoId)):null;
+    if(lider&&lider.temperamento&&p.temperamento)pares.push({lider,lid:p});
+  });
   if(!pares.length){corrWrap.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted)">Nenhuma correlação disponível ainda.</div>';return;}
   corrWrap.innerHTML=pares.map(({lider,lid},i)=>{
     const k1=lider.temperamento+'-'+lid.temperamento;const k2=lid.temperamento+'-'+lider.temperamento;
@@ -1064,7 +1296,7 @@ function renderPainel(){
     return`<div class="corr-card">
       <div class="corr-card-header" onclick="toggleCorr(${i})" style="background:${corr.cor}12">
         <div><div style="font-size:.86rem;font-weight:700">${lider.nome} → ${lid.nome}</div><div style="font-size:.72rem;color:var(--muted);margin-top:2px"><span class="badge ${lider.temperamento}" style="font-size:.65rem">${LABELS[lider.temperamento]}</span> × <span class="badge ${lid.temperamento}" style="font-size:.65rem">${LABELS[lid.temperamento]}</span></div></div>
-        <span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:${corr.cor}22;color:${corr.cor};font-weight:700" id="corr-tipo-${i}">${corr.tipo}</span>
+        <span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:${corr.cor}22;color:${corr.cor};font-weight:700">${corr.tipo}</span>
       </div>
       <div class="corr-card-body" id="corr-body-${i}">
         <p style="font-size:.8rem;color:#555;margin-bottom:10px;line-height:1.5"><strong>${corr.titulo}:</strong> ${corr.desc}</p>
@@ -1080,10 +1312,14 @@ function toggleCorr(i){const b=document.getElementById('corr-body-'+i);b.classLi
 // ════════════════════════════════════════════════════════════════════════════
 function abrirModal(id){
   const p=participants.find(x=>x.id===id);if(!p)return;
-  const lider=p.liderDiretoId?participants.find(x=>x.id===p.liderDiretoId):null;
+  const liderParticipant=p.liderDiretoId&&!p.liderDiretoId.startsWith('CAD-')
+    ?participants.find(x=>x.id===p.liderDiretoId):null;
   document.getElementById('m-nome').textContent=p.nome;
-  document.getElementById('m-meta').textContent=`${p.role==='lider'?'🎯 Líder':'🌱 Liderado'} · ${p.cargo||''} · ${p.area||''} · ${p.ts||''}`;
-  document.getElementById('m-body').innerHTML=p.role==='liderado'&&lider?buildPerfilComCorrelacao(p,lider):buildPerfilCompleto(p,null);
+  const roleLabel=p.role==='lider'?'🎯 Líder':'🌱 Staff/Colaborador';
+  document.getElementById('m-meta').textContent=`${roleLabel} · ${p.cargo||''} · ${p.area||''} · ${p.ts||''}`;
+  document.getElementById('m-body').innerHTML=liderParticipant&&liderParticipant.temperamento
+    ?buildPerfilComCorrelacao(p,liderParticipant)
+    :buildPerfilCompleto(p,null);
   document.getElementById('modal-bg').classList.add('open');
 }
 function fecharModal(){document.getElementById('modal-bg').classList.remove('open');}
@@ -1113,7 +1349,7 @@ function copiarLink(){const base=window.location.href.split('?')[0];navigator.cl
 // ════════════════════════════════════════════════════════════════════════════
 // RENDER ALL + INIT
 // ════════════════════════════════════════════════════════════════════════════
-function renderAll(){updateLiderSelect();}
+function renderAll(){updateLiderSelect();updateSuperiorSelect();}
 
 async function init(){
   // Check URL param for candidato mode
