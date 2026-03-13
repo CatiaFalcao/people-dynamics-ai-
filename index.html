@@ -45,6 +45,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .fi{padding:10px 13px;border-radius:8px;border:1.5px solid var(--border);background:white;font-family:inherit;font-size:.88rem;color:var(--text);transition:border .2s;width:100%}
 .fi:focus{outline:none;border-color:var(--gold)}
+.fi.input-error{border-color:#C0392B !important;background:#FFF8F8}
 select.fi{cursor:pointer}
 textarea.fi{resize:vertical;min-height:72px}
 
@@ -138,6 +139,12 @@ textarea.fi{resize:vertical;min-height:72px}
 /* STORAGE BANNER */
 .storage-banner{background:#1A3A5C;color:white;text-align:center;padding:6px;font-size:.76rem}
 
+/* HIERARQUIA VISUAL */
+.hierarquia-tree{padding:12px 0}
+.hier-nivel{display:flex;align-items:flex-start;gap:10px;margin-bottom:4px}
+.hier-indent{width:20px;flex-shrink:0}
+.hier-badge{font-size:.72rem;padding:3px 9px;border-radius:6px;font-weight:700;white-space:nowrap}
+
 /* MAPA MENTAL */
 .mapa-bloco{margin-bottom:36px}
 .mapa-lider-node{display:inline-flex;flex-direction:column;align-items:center;padding:16px 24px;border-radius:14px;background:var(--text);color:var(--bg);box-shadow:0 4px 20px rgba(0,0,0,.18);min-width:200px;text-align:center;position:relative;z-index:2}
@@ -180,6 +187,9 @@ textarea.fi{resize:vertical;min-height:72px}
 .detail-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
 .detail-val{font-size:.84rem;line-height:1.5}
 
+/* CORR AUTO BADGE */
+.corr-auto-tag{display:inline-flex;align-items:center;gap:5px;background:#EAF7F0;color:#1A5C35;border:1px solid #B2DFCE;border-radius:8px;padding:4px 10px;font-size:.74rem;font-weight:700;margin-top:8px}
+
 @media(max-width:700px){
   .form-row,.talent-grid,.bars,.stats,.corr-grid{grid-template-columns:1fr}
   .page{padding:20px 14px}
@@ -216,7 +226,7 @@ textarea.fi{resize:vertical;min-height:72px}
 <header class="header">
   <div class="header-brand">
     <div class="header-logo-wrap">
-      <img src="data:image/jpeg;base64,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" alt="Suzano" style="height:44px;width:auto;display:block">
+      <img src="data:image/jpeg;base64,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" alt="Suzano" style="height:44px;width:auto;display:block">
     </div>
     <div class="header-divider"></div>
     <div>
@@ -258,24 +268,25 @@ textarea.fi{resize:vertical;min-height:72px}
   </div>
 
   <div class="card">
+    <div class="card-title">🌳 Hierarquia Organizacional — Florestal MS</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:14px">Estrutura hierárquica configurada para diagnóstico e correlação líder-liderado.</div>
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:.83rem">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1rem">🌟</span><span style="background:#1A3A5C;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Diretor Florestal MS</span><span style="color:var(--muted);font-size:.74rem">— Topo da hierarquia</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:24px"><span style="color:#C8BEA8">└──</span><span style="background:#C0392B;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Diretor de Abastecimento / Formação</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:48px"><span style="color:#C8BEA8">└──</span><span style="background:#E67E22;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Gerente Executivo / Funcional</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:72px"><span style="color:#C8BEA8">└──</span><span style="background:#B8960C;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Coordenador / Consultor</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:96px"><span style="color:#C8BEA8">└──</span><span style="background:#27AE60;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Supervisor</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:120px"><span style="color:#C8BEA8">└──</span><span style="background:#7F8C8D;color:white;padding:3px 10px;border-radius:6px;font-weight:700;font-size:.74rem">Analista / Técnico / Assistente / Operacional</span></div>
+    </div>
+  </div>
+
+  <div class="card">
     <div class="card-title">💡 Como funciona</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:.84rem;line-height:1.6;color:#444">
-      <div>
-        <strong style="color:var(--text)">🧠 Temperamento — Sua essência</strong><br>
-        Revela quem você é por natureza: como você pensa, sente e reage de forma intrínseca. Independe do ambiente ou cargo.
-      </div>
-      <div>
-        <strong style="color:var(--text)">🧩 DISC — Seu comportamento</strong><br>
-        Revela como você age no ambiente profissional: seu estilo de comunicação, tomada de decisão e relacionamento com outros.
-      </div>
-      <div>
-        <strong style="color:var(--text)">🗺️ Mapa das Equipes</strong><br>
-        Visualize cada líder com seus liderados. Clique em qualquer pessoa para ver perfil, correlação e recomendações específicas.
-      </div>
-      <div>
-        <strong style="color:var(--text)">🚀 Alta Performance</strong><br>
-        Cada combinação líder-liderado gera recomendações de feedback, comunicação, motivação e encaixe ideal na equipe.
-      </div>
+      <div><strong style="color:var(--text)">🧠 Temperamento — Sua essência</strong><br>Revela quem você é por natureza: como você pensa, sente e reage de forma intrínseca. Independe do ambiente ou cargo.</div>
+      <div><strong style="color:var(--text)">🧩 DISC — Seu comportamento</strong><br>Revela como você age no ambiente profissional: seu estilo de comunicação, tomada de decisão e relacionamento com outros.</div>
+      <div><strong style="color:var(--text)">🗺️ Mapa das Equipes</strong><br>Visualize cada líder com seus liderados. Clique em qualquer pessoa para ver perfil, correlação e recomendações específicas.</div>
+      <div><strong style="color:var(--text)">🚀 Alta Performance</strong><br>Cada combinação líder-liderado gera recomendações de feedback, comunicação, motivação e encaixe ideal na equipe.</div>
     </div>
   </div>
 </div>
@@ -286,24 +297,41 @@ textarea.fi{resize:vertical;min-height:72px}
   <p class="page-desc">Gerencie a lista oficial de líderes da organização. Apenas gestores podem cadastrar, editar ou excluir.</p>
   <div id="alerta-lid" class="alert"></div>
 
-  <!-- FORMULÁRIO CADASTRO / EDIÇÃO -->
   <div class="card" id="form-lider-card">
     <div class="card-title" id="form-lider-titulo">➕ Novo Líder</div>
     <div class="form-row" style="margin-bottom:14px">
-      <div class="fg"><label>Nome completo</label><input class="fi" id="fl-nome" placeholder="Nome do líder"></div>
       <div class="fg">
-        <label>Cargo</label>
-        <select class="fi" id="fl-cargo">
+        <label>Nome completo <span style="color:#C0392B">*</span> <span style="font-weight:400;font-size:.68rem">(primeiro e último nome)</span></label>
+        <input class="fi" id="fl-nome" placeholder="Ex: Ana Souza">
+      </div>
+      <div class="fg">
+        <label>Cargo <span style="color:#C0392B">*</span></label>
+        <select class="fi" id="fl-cargo" onchange="updateSuperiorSelectByHier()">
           <option value="">— Selecione —</option>
-          <option>Diretor</option><option>Gerente Executivo</option><option>Gerente</option>
-          <option>Coordenador</option><option>Supervisor</option><option>Analista</option>
-          <option>Técnico</option><option>Operador</option><option>Consultor</option>
+          <optgroup label="Nível 1 — Direção Geral">
+            <option value="Diretor Florestal MS">Diretor Florestal MS</option>
+          </optgroup>
+          <optgroup label="Nível 2 — Direção">
+            <option value="Diretor de Abastecimento">Diretor de Abastecimento</option>
+            <option value="Diretor de Formação">Diretor de Formação</option>
+          </optgroup>
+          <optgroup label="Nível 3 — Gerência">
+            <option value="Gerente Executivo">Gerente Executivo</option>
+            <option value="Gerente Funcional">Gerente Funcional</option>
+          </optgroup>
+          <optgroup label="Nível 4 — Coordenação">
+            <option value="Coordenador">Coordenador</option>
+            <option value="Consultor">Consultor</option>
+          </optgroup>
+          <optgroup label="Nível 5 — Supervisão">
+            <option value="Supervisor">Supervisor</option>
+          </optgroup>
         </select>
       </div>
     </div>
     <div class="form-row" style="margin-bottom:14px">
       <div class="fg">
-        <label>Área / Setor</label>
+        <label>Área / Setor <span style="color:#C0392B">*</span></label>
         <select class="fi" id="fl-area"></select>
       </div>
       <div class="fg">
@@ -320,7 +348,6 @@ textarea.fi{resize:vertical;min-height:72px}
     </div>
   </div>
 
-  <!-- LISTA DE LÍDERES -->
   <div class="card">
     <div class="card-title">📋 Líderes Cadastrados</div>
     <div id="lista-lideres-wrap"></div>
@@ -333,13 +360,16 @@ textarea.fi{resize:vertical;min-height:72px}
   <p class="page-desc">Preencha seus dados e responda os dois instrumentos. Leva cerca de 8 minutos.</p>
   <div id="alerta-cad" class="alert"></div>
 
-  <!-- IDENTIFICAÇÃO -->
   <div class="card">
     <div class="card-title">👤 Identificação</div>
     <div class="form-row" style="margin-bottom:14px">
-      <div class="fg"><label>Nome completo</label><input class="fi" id="f-nome" placeholder="Seu nome completo"></div>
       <div class="fg">
-        <label>Função</label>
+        <label>Nome completo <span style="color:#C0392B">*</span> <span style="font-weight:400;font-size:.68rem">(primeiro e último nome)</span></label>
+        <input class="fi" id="f-nome" placeholder="Ex: João Silva" oninput="validarNomeInput(this)">
+        <div id="f-nome-hint" style="font-size:.71rem;color:var(--muted);margin-top:2px;display:none">⚠️ Informe pelo menos o primeiro e o último nome.</div>
+      </div>
+      <div class="fg">
+        <label>Função <span style="color:#C0392B">*</span></label>
         <div class="role-row" style="margin-top:4px">
           <button class="role-btn" id="rbtn-lider" onclick="selRole(this,'lider')">🎯 Líder</button>
           <button class="role-btn" id="rbtn-staff" onclick="selRole(this,'staff')">🌱 Staff / Colaborador</button>
@@ -348,20 +378,46 @@ textarea.fi{resize:vertical;min-height:72px}
     </div>
     <div class="form-row" style="margin-bottom:14px">
       <div class="fg">
-        <label>Cargo</label>
-        <select class="fi" id="f-cargo">
+        <label>Cargo <span style="color:#C0392B">*</span></label>
+        <select class="fi" id="f-cargo" onchange="onCargoChange()">
           <option value="">— Selecione —</option>
-          <option>Diretor</option><option>Gerente Executivo</option><option>Gerente</option>
-          <option>Coordenador</option><option>Supervisor</option><option>Analista</option>
-          <option>Técnico</option><option>Operador</option><option>Consultor</option>
+          <optgroup label="Nível 1 — Direção Geral">
+            <option value="Diretor Florestal MS">Diretor Florestal MS</option>
+          </optgroup>
+          <optgroup label="Nível 2 — Direção">
+            <option value="Diretor de Abastecimento">Diretor de Abastecimento</option>
+            <option value="Diretor de Formação">Diretor de Formação</option>
+          </optgroup>
+          <optgroup label="Nível 3 — Gerência">
+            <option value="Gerente Executivo">Gerente Executivo</option>
+            <option value="Gerente Funcional">Gerente Funcional</option>
+          </optgroup>
+          <optgroup label="Nível 4 — Coordenação">
+            <option value="Coordenador">Coordenador</option>
+            <option value="Consultor">Consultor</option>
+          </optgroup>
+          <optgroup label="Nível 5 — Supervisão">
+            <option value="Supervisor">Supervisor</option>
+          </optgroup>
+          <optgroup label="Nível 6 — Analistas e Técnicos">
+            <option value="Analista">Analista</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Assistente">Assistente</option>
+          </optgroup>
+          <optgroup label="Nível 7 — Operacional">
+            <option value="Operador">Operador</option>
+            <option value="Motorista">Motorista</option>
+            <option value="Auxiliar">Auxiliar</option>
+            <option value="Cargo Operacional">Cargo Operacional</option>
+          </optgroup>
         </select>
       </div>
       <div class="fg">
-        <label>Área / Setor</label>
+        <label>Área / Setor <span style="color:#C0392B">*</span></label>
         <select class="fi" id="f-area"></select>
       </div>
     </div>
-    <!-- Líder Direto — aparece para todos (lider tem lider superior; staff tem lider) -->
+    <!-- Líder Direto -->
     <div class="form-row">
       <div class="fg">
         <label>Líder Direto / Superior</label>
@@ -370,10 +426,17 @@ textarea.fi{resize:vertical;min-height:72px}
         </select>
       </div>
       <div class="fg" style="align-self:flex-end">
-        <div style="font-size:.75rem;color:var(--muted);padding:8px 0;line-height:1.55">
+        <div style="font-size:.75rem;color:var(--muted);padding:8px 0;line-height:1.55" id="lider-hint-box">
           Selecione seu líder direto. Se você está no topo da hierarquia, deixe em branco.
         </div>
       </div>
+    </div>
+    <!-- Correlação automática: aviso quando líder selecionado ainda não fez diagnóstico -->
+    <div id="corr-auto-aviso" style="display:none;margin-top:10px;padding:10px 14px;background:#FEF9E7;border:1px solid #F9E4B0;border-radius:8px;font-size:.8rem;color:#7B5800">
+      ⚠️ O líder selecionado ainda não completou o diagnóstico. A correlação será gerada automaticamente assim que ele fizer o diagnóstico.
+    </div>
+    <div id="corr-auto-ok" style="display:none;margin-top:10px;padding:10px 14px;background:#EAF7F0;border:1px solid #B2DFCE;border-radius:8px;font-size:.8rem;color:#1A5C35">
+      ✅ Líder com diagnóstico completo! A correlação líder-liderado será gerada automaticamente ao salvar.
     </div>
   </div>
 
@@ -384,7 +447,6 @@ textarea.fi{resize:vertical;min-height:72px}
       <button class="diag-tab" id="tab-disc-btn" onclick="switchTab('disc')">🧩 DISC — Comportamento</button>
     </div>
 
-    <!-- TEMPERAMENTO -->
     <div id="tab-temp" style="padding:20px 0 8px">
       <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px;line-height:1.5">Revela sua <strong>essência natural</strong> — quem você é independente do cargo ou ambiente. Em cada linha, escolha <strong>uma palavra</strong> que mais representa você.</p>
       <div id="words-area"></div>
@@ -402,7 +464,6 @@ textarea.fi{resize:vertical;min-height:72px}
       </div>
     </div>
 
-    <!-- DISC -->
     <div id="tab-disc" style="display:none;padding:20px 0 8px">
       <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5">Revela seu <strong>comportamento observável</strong> no ambiente de trabalho. Em cada linha, escolha <strong>uma palavra</strong> que melhor descreve como você age.</p>
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
@@ -427,7 +488,6 @@ textarea.fi{resize:vertical;min-height:72px}
     </div>
   </div>
 
-  <!-- TALENTOS -->
   <div class="card">
     <div class="card-title">✨ Autoconhecimento</div>
     <div class="talent-grid">
@@ -489,13 +549,15 @@ textarea.fi{resize:vertical;min-height:72px}
     <div class="card">
       <div class="card-title">👤 Seus Dados</div>
       <div class="form-row">
-        <div class="fg"><label>Nome completo</label><input class="fi" id="fc-nome" placeholder="Seu nome completo"></div>
-        <div class="fg"><label>Cargo pretendido</label><select class="fi" id="fc-cargo"><option value="">— Selecione —</option><option>Diretor</option><option>Gerente Executivo</option><option>Gerente</option><option>Coordenador</option><option>Supervisor</option><option>Analista</option><option>Técnico</option><option>Operador</option><option>Consultor</option></select></div>
+        <div class="fg">
+          <label>Nome completo <span style="color:#C0392B">*</span> <span style="font-weight:400;font-size:.68rem">(primeiro e último nome)</span></label>
+          <input class="fi" id="fc-nome" placeholder="Ex: Maria Silva" oninput="validarNomeInput(this)">
+        </div>
+        <div class="fg"><label>Cargo pretendido</label><select class="fi" id="fc-cargo"><option value="">— Selecione —</option><option>Analista</option><option>Técnico</option><option>Assistente</option><option>Operador</option><option>Supervisor</option><option>Coordenador</option><option>Gerente</option></select></div>
       </div>
       <div class="fg" style="margin-top:14px"><label>Área de interesse</label><select class="fi" id="fc-area"></select></div>
     </div>
 
-    <!-- TEMP CANDIDATO -->
     <div class="card" style="padding-bottom:0">
       <div class="diag-tabs">
         <button class="diag-tab active" id="ctab-temp-btn" onclick="switchCandTab('temp')">🧠 Temperamento — Essência</button>
@@ -556,21 +618,45 @@ textarea.fi{resize:vertical;min-height:72px}
 
 <script>
 // ════════════════════════════════════════════════════════════════════════════
-// CONFIG — SUBSTITUA COM SEUS VALORES DO JSONBIN
+// CONFIG
 // ════════════════════════════════════════════════════════════════════════════
 const JSONBIN_ID  = '69addd78d0ea881f40fd87eb';
 const JSONBIN_KEY = '$2a$10$5Q9/pUq5WyX/gKrVGzHy6epLMILLOeatAG.nEgXW8fRlnvo9T5k/G';
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
-const SENHA_GESTOR = 'suzano2025'; // altere para sua senha
+const SENHA_GESTOR = 'suzano2025';
+
+// ════════════════════════════════════════════════════════════════════════════
+// HIERARQUIA DE CARGOS (níveis 1-7)
+// ════════════════════════════════════════════════════════════════════════════
+const HIER = {
+  'Diretor Florestal MS': 1,
+  'Diretor de Abastecimento': 2, 'Diretor de Formação': 2,
+  'Gerente Executivo': 3, 'Gerente Funcional': 3,
+  'Coordenador': 4, 'Consultor': 4,
+  'Supervisor': 5,
+  'Analista': 6, 'Técnico': 6, 'Assistente': 6,
+  'Operador': 7, 'Motorista': 7, 'Auxiliar': 7, 'Cargo Operacional': 7,
+};
+
+// Cargos que são considerados "líderes" (podem ter liderados)
+const CARGOS_LIDER = ['Diretor Florestal MS','Diretor de Abastecimento','Diretor de Formação','Gerente Executivo','Gerente Funcional','Coordenador','Consultor','Supervisor'];
+
+// Dado um cargo, quais níveis são superiores imediatos possíveis
+function getCargosSuperior(cargo){
+  const nivel = HIER[cargo];
+  if(!nivel || nivel <= 1) return [];
+  // superior imediato = nível - 1
+  return Object.entries(HIER).filter(([c,n])=>n===nivel-1).map(([c])=>c);
+}
 
 // ════════════════════════════════════════════════════════════════════════════
 // ÁREAS COM SUBÁREAS
 // ════════════════════════════════════════════════════════════════════════════
 const AREAS = [
-  { grupo: 'Manutenção', subs: ['Manutenção · Geral','Manutenção · Oficina', 'Manutenção · PCM', 'Manutenção · Silvicultura', 'Manutenção · Colheita', 'Manutenção · Logística'] },
-  { grupo: 'Colheita',   subs: ['Colheita · Geral','Colheita · Corte', 'Colheita · Baldeio', 'Colheita · Frota de Apoio'] },
-  { grupo: 'Silvicultura', subs: ['Silvicultura · Geral', 'Silvicultura · Plantio', 'Silvicultura · Autopropelido', 'Silvicultura · Preparo de Solo', 'Silvicultura · Frota de Apoio'] },
-  { grupo: 'Logística',  subs: ['Logística · Geral','Logística · Pátio', 'Logística · Transporte'] },
+  { grupo: 'Manutenção', subs: ['Manutenção · Oficina', 'Manutenção · PCM', 'Manutenção · Silvicultura', 'Manutenção · Colheita', 'Manutenção · Logística'] },
+  { grupo: 'Colheita',   subs: ['Colheita · Corte', 'Colheita · Baldeio', 'Colheita · Frota de Apoio'] },
+  { grupo: 'Silvicultura', subs: ['Silvicultura · Plantio', 'Silvicultura · Autopropelido', 'Silvicultura · Preparo de Solo', 'Silvicultura · Frota de Apoio'] },
+  { grupo: 'Logística',  subs: ['Logística · Pátio', 'Logística · Transporte'] },
   { grupo: 'Outras',     subs: ['SSQV', 'Gente e Gestão', 'Operação de Abastecimento', 'Operação de Formação'] },
 ];
 
@@ -590,6 +676,25 @@ function populateAreaSelect(selId, selectedVal){
 
 function populateAllAreas(){
   ['f-area','fl-area','fc-area'].forEach(id => populateAreaSelect(id));
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// VALIDAÇÃO DE NOME (primeiro + último nome obrigatórios)
+// ════════════════════════════════════════════════════════════════════════════
+function nomeValido(nome){
+  const partes = nome.trim().split(/\s+/);
+  return partes.length >= 2 && partes[0].length >= 2 && partes[partes.length-1].length >= 2;
+}
+
+function validarNomeInput(input){
+  const hint = document.getElementById(input.id + '-hint');
+  if(!nomeValido(input.value)){
+    input.classList.add('input-error');
+    if(hint) hint.style.display='block';
+  } else {
+    input.classList.remove('input-error');
+    if(hint) hint.style.display='none';
+  }
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -653,37 +758,17 @@ const DISC_DESC = {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// PERFIS COMPLETOS POR TEMPERAMENTO (para o mapa)
+// PERFIS COMPLETOS POR TEMPERAMENTO
 // ════════════════════════════════════════════════════════════════════════════
 const PERFIL_TEMP = {
-  colerico:{
-    comunicacao:'Seja direto, objetivo e vá ao ponto. Evite rodeios e explicações longas. Apresente o resultado esperado e dê autonomia para ele decidir o como.',
-    habilidades:'Liderança em crises, tomada de decisão rápida, execução sob pressão, negociação e resolução de problemas complexos.',
-    encaixe:'Gestão de projetos críticos, liderança de equipes, papéis que exijam resultados rápidos e visibilidade organizacional.',
-    harmonia:'Reconheça publicamente suas conquistas. Dê desafios contínuos e autonomia real. Evite microgestão e burocracia excessiva.',
-  },
-  melancolico:{
-    comunicacao:'Seja estruturado, use dados e exemplos concretos. Dê tempo para ele processar. Preferência por comunicação escrita e planejada.',
-    habilidades:'Análise crítica, controle de qualidade, planejamento detalhado, documentação, pesquisa e processos de melhoria contínua.',
-    encaixe:'Áreas de qualidade, análise de dados, planejamento estratégico, projetos que exijam precisão e profundidade técnica.',
-    harmonia:'Valorize a qualidade do trabalho dele. Dê ambiente organizado e previsível. Evite improvisação e mudanças sem justificativa lógica.',
-  },
-  sanguineo:{
-    comunicacao:'Use entusiasmo e seja positivo. Histórias e exemplos funcionam melhor que dados frios. Conecte-se emocionalmente antes de passar conteúdo.',
-    habilidades:'Comunicação, engajamento de pessoas, apresentações, treinamentos, criação de cultura, vendas e inspiração de equipes.',
-    encaixe:'Funções de comunicação interna, treinamento, cultura organizacional, relacionamento com clientes e liderança de grupos.',
-    harmonia:'Reconhecimento público frequente e variedade de tarefas. Ambiente animado e conexão com pessoas. Evite rotinas monótonas.',
-  },
-  fleumatico:{
-    comunicacao:'Seja calmo, gentil e respeitoso. Evite pressão excessiva. Dê tempo para ele responder. Prefere ambiente seguro para se expressar.',
-    habilidades:'Mediação de conflitos, suporte a equipes, manutenção de processos, constância, lealdade e construção de relacionamentos de longo prazo.',
-    encaixe:'Funções de suporte, mediação, projetos de longo prazo, áreas que valorizem consistência e confiabilidade acima da velocidade.',
-    harmonia:'Ambiente estável e previsível. Mudanças com explicação prévia. Reconhecimento discreto e valorização da sua contribuição contínua.',
-  },
+  colerico:{comunicacao:'Seja direto, objetivo e vá ao ponto. Evite rodeios e explicações longas. Apresente o resultado esperado e dê autonomia para ele decidir o como.',habilidades:'Liderança em crises, tomada de decisão rápida, execução sob pressão, negociação e resolução de problemas complexos.',encaixe:'Gestão de projetos críticos, liderança de equipes, papéis que exijam resultados rápidos e visibilidade organizacional.',harmonia:'Reconheça publicamente suas conquistas. Dê desafios contínuos e autonomia real. Evite microgestão e burocracia excessiva.'},
+  melancolico:{comunicacao:'Seja estruturado, use dados e exemplos concretos. Dê tempo para ele processar. Preferência por comunicação escrita e planejada.',habilidades:'Análise crítica, controle de qualidade, planejamento detalhado, documentação, pesquisa e processos de melhoria contínua.',encaixe:'Áreas de qualidade, análise de dados, planejamento estratégico, projetos que exijam precisão e profundidade técnica.',harmonia:'Valorize a qualidade do trabalho dele. Dê ambiente organizado e previsível. Evite improvisação e mudanças sem justificativa lógica.'},
+  sanguineo:{comunicacao:'Use entusiasmo e seja positivo. Histórias e exemplos funcionam melhor que dados frios. Conecte-se emocionalmente antes de passar conteúdo.',habilidades:'Comunicação, engajamento de pessoas, apresentações, treinamentos, criação de cultura, vendas e inspiração de equipes.',encaixe:'Funções de comunicação interna, treinamento, cultura organizacional, relacionamento com clientes e liderança de grupos.',harmonia:'Reconhecimento público frequente e variedade de tarefas. Ambiente animado e conexão com pessoas. Evite rotinas monótonas.'},
+  fleumatico:{comunicacao:'Seja calmo, gentil e respeitoso. Evite pressão excessiva. Dê tempo para ele responder. Prefere ambiente seguro para se expressar.',habilidades:'Mediação de conflitos, suporte a equipes, manutenção de processos, constância, lealdade e construção de relacionamentos de longo prazo.',encaixe:'Funções de suporte, mediação, projetos de longo prazo, áreas que valorizem consistência e confiabilidade acima da velocidade.',harmonia:'Ambiente estável e previsível. Mudanças com explicação prévia. Reconhecimento discreto e valorização da sua contribuição contínua.'},
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// CORRELAÇÕES TEMPERAMENTO
+// CORRELAÇÕES
 // ════════════════════════════════════════════════════════════════════════════
 const CORR = {
   'colerico-colerico':{tipo:'Tensão',cor:'#C0392B',titulo:'Força × Força',desc:'Dois perfis dominantes com forte opinião. Pode haver competição saudável ou conflito de ego. Exige clareza de papéis e respeito mútuo.'},
@@ -698,11 +783,8 @@ const CORR = {
   'fleumatico-fleumatico':{tipo:'Neutro',cor:'#7F8C8D',titulo:'Harmonia × Estagnação',desc:'Ambiente muito harmonioso, mas com risco de acomodação. Precisam de desafios externos e metas claras para se desenvolverem.'},
 };
 
-// ════════════════════════════════════════════════════════════════════════════
-// AÇÕES RECOMENDADAS (temperamento lider-liderado)
-// ════════════════════════════════════════════════════════════════════════════
 const ACOES = {
-  'colerico-colerico':{feedback:'Seja direto, objetivo e baseado em dados. Evite rodeios. Dê espaço para o liderado se justificar — ele também tem opinião forte.',desenvolver:'Desafie com metas ambiciosas e autonomia real. Delegue projetos de alta visibilidade.',motivar:'Reconhecimento público, desafios novos e protagonismo. Dê autoridade para decidir.',potencial:'Coloque-o à frente de projetos que exijam liderança e resolução de problemas complexos.',comunicacao:'Direto ao ponto, sem rodeios. Use linguagem de resultado e impacto. Evite explicações longas.',habilidades:'Execução rápida, liderança em crises, tomada de decisão sob pressão.',encaixe:'Linha de frente de projetos críticos que exijam velocidade, decisão e visibilidade.'},
+  'colerico-colerico':{feedback:'Seja direto, objetivo e baseado em dados. Evite rodeios. Dê espaço para o liderado se justificar — ele também tem opinião forte.',desenvolver:'Desafie com metas ambiciosas e autonomia real. Delegue projetos de alta visibilidade.',motivar:'Reconhecimento público, desafios novos e protagonismo. Dê autoridade para decidir.',potencial:'Coloque-o à frente de projetos que exijam liderança e resolução de problemas complexos.',comunicacao:'Direto ao ponto, sem rodeios. Use linguagem de resultado e impacto.',habilidades:'Execução rápida, liderança em crises, tomada de decisão sob pressão.',encaixe:'Linha de frente de projetos críticos que exijam velocidade, decisão e visibilidade.'},
   'colerico-melancolico':{feedback:'Seja específico, traga dados e exemplos concretos. Dê tempo para ele processar — não pressione por resposta imediata.',desenvolver:'Ofereça projetos de análise profunda, processos e qualidade. Invista em capacitação técnica.',motivar:'Reconhecimento pela qualidade e precisão do trabalho. Autonomia para organizar o próprio método.',potencial:'Use-o como revisão crítica de projetos importantes. Ele encontra erros que outros não veem.',comunicacao:'Estruturado, com dados e exemplos escritos. Prefere tempo para processar antes de responder.',habilidades:'Análise crítica, controle de qualidade, documentação e melhoria de processos.',encaixe:'Comitês de qualidade, auditoria interna, planejamento e processos de melhoria contínua.'},
   'colerico-sanguineo':{feedback:'Seja positivo no tom, mas firme no conteúdo. Reconheça → aponte → direcione.',desenvolver:'Ofereça variedade de tarefas. Trabalhe foco e conclusão — a tendência é iniciar muito e terminar pouco.',motivar:'Celebração pública, novas oportunidades e contato com pessoas.',potencial:'Use-o em projetos de comunicação, persuasão e engajamento de equipes.',comunicacao:'Entusiasta e positivo. Use histórias e exemplos. Conecte-se antes de passar conteúdo.',habilidades:'Comunicação, engajamento, apresentações, treinamento e disseminação de cultura.',encaixe:'Projetos de comunicação interna, treinamentos, cultura organizacional e relacionamento.'},
   'colerico-fleumatico':{feedback:'Seja respeitoso e calmo no tom. Evite pressão e urgência excessiva.',desenvolver:'Trabalhe tomada de decisão e posicionamento. Ajude-o a desenvolver assertividade.',motivar:'Ambiente seguro, relacionamentos harmoniosos e previsibilidade.',potencial:'Use-o como elo de integração da equipe — ele mantém a coesão nos momentos de tensão.',comunicacao:'Calmo, gentil e sem pressão. Prefere ambiente seguro para se expressar.',habilidades:'Mediação, suporte a equipes, constância e construção de relacionamentos.',encaixe:'Funções de suporte, mediação de conflitos e projetos de longo prazo.'},
@@ -724,27 +806,26 @@ const ACOES = {
 // STATE
 // ════════════════════════════════════════════════════════════════════════════
 let participants = [];
-let lideresCad = []; // lista oficial de líderes cadastrados pelo gestor
+let lideresCad = [];
 let selectedRole = null;
 let rowSel = new Array(15).fill(null);
 let discSel = new Array(15).fill(null);
-let tempStarted = false, discStarted = false;
+let tempRef={v:false}, discRef={v:false};
 let candTempSel = new Array(15).fill(null);
 let candDiscSel = new Array(15).fill(null);
-let candTempStarted = false, candDiscStarted = false;
-let mapaOpenLiderId = null;
-let mapaOpenLideradoId = null;
+let ctempRef={v:false}, cdiscRef={v:false};
 
 // ════════════════════════════════════════════════════════════════════════════
 // JSONBIN STORAGE
 // ════════════════════════════════════════════════════════════════════════════
-function showSync(msg){const el=document.getElementById('sync-status');if(el)el.textContent=msg}
+function showSync(msg){const el=document.getElementById('sync-status');if(el)el.textContent=msg;}
 async function loadData(){
   showSync('⟳ carregando...');
   try{
     const r=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY,'X-Bin-Meta':false}});
     if(!r.ok)throw new Error('status '+r.status);
     const d=await r.json();
+    // PRESERVA dados existentes — apenas merge, nunca substitui
     participants=d.participants||[];
     lideresCad=d.lideresCad||[];
     showSync('✓ sincronizado');
@@ -771,7 +852,7 @@ async function saveData(){
   },600);
 }
 function exportarJSON(){
-  const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),participants},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),participants,lideresCad},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
 }
 
@@ -779,8 +860,7 @@ function exportarJSON(){
 // SENHA / ACESSO
 // ════════════════════════════════════════════════════════════════════════════
 let gestorAutenticado = false;
-let paginaPendente = null; // página que o usuário tentou acessar antes da senha
-
+let paginaPendente = null;
 const PAGINAS_RESTRITAS = ['lideres','mapa','painel','selecao'];
 
 function pedirSenha(pagina){
@@ -791,12 +871,10 @@ function pedirSenha(pagina){
   document.getElementById('senha-screen').style.display='flex';
   setTimeout(()=>document.getElementById('input-senha').focus(),100);
 }
-
 function fecharSenhaModal(){
   document.getElementById('senha-screen').style.display='none';
   paginaPendente=null;
 }
-
 function verificarSenha(){
   const v=document.getElementById('input-senha').value;
   if(v===SENHA_GESTOR){
@@ -828,11 +906,7 @@ function entrarComoCandidato(){
 // NAVIGATION
 // ════════════════════════════════════════════════════════════════════════════
 function showPage(name,btn){
-  // Páginas restritas exigem autenticação
-  if(PAGINAS_RESTRITAS.includes(name) && !gestorAutenticado){
-    pedirSenha(name);
-    return;
-  }
+  if(PAGINAS_RESTRITAS.includes(name) && !gestorAutenticado){pedirSenha(name);return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -889,7 +963,6 @@ function buildWordTable(areaId,rows,cols,selArr,onSelect,prefix){
   html+=`</tbody></table></div>`;
   area.innerHTML=html;
 }
-
 function buildTables(){
   buildWordTable('words-area',WORD_ROWS,TEMPS,rowSel,'selectTemp','tw');
   buildWordTable('disc-words-area',DISC_ROWS,DISC_F,discSel,'selectDisc','dw');
@@ -902,7 +975,7 @@ function buildCandTables(){
 // ════════════════════════════════════════════════════════════════════════════
 // WORD SELECTION LOGIC
 // ════════════════════════════════════════════════════════════════════════════
-function selectWord(ri,key,selArr,prefix,colors,barsId,updateFn,startedRef,setStarted){
+function selectWord(ri,key,selArr,prefix,colors,barsId,updateFn,startedRef){
   const prev=selArr[ri];
   if(prev){const pb=document.getElementById(`${prefix}-${ri}-${prev}`);if(pb){pb.style.background='white';pb.style.color='var(--text)';pb.style.borderColor='var(--border)';pb.style.fontWeight='400';}}
   if(prev===key){selArr[ri]=null;}else{
@@ -913,12 +986,10 @@ function selectWord(ri,key,selArr,prefix,colors,barsId,updateFn,startedRef,setSt
   }
   updateFn();
 }
-
-const tempRef={v:false},discRef={v:false},ctempRef={v:false},cdiscRef={v:false};
-function selectTemp(ri,key){selectWord(ri,key,rowSel,'tw',COLORS,'bars-area',updateTempBars,tempRef,v=>tempRef.v=v);}
-function selectDisc(ri,key){selectWord(ri,key,discSel,'dw',DISC_COLORS,'disc-bars-area',updateDiscBars,discRef,v=>discRef.v=v);}
-function selectCandTemp(ri,key){selectWord(ri,key,candTempSel,'ctw',COLORS,'cand-bars-temp',updateCandTempBars,ctempRef,v=>ctempRef.v=v);}
-function selectCandDisc(ri,key){selectWord(ri,key,candDiscSel,'cdw',DISC_COLORS,'cand-bars-disc',updateCandDiscBars,cdiscRef,v=>cdiscRef.v=v);}
+function selectTemp(ri,key){selectWord(ri,key,rowSel,'tw',COLORS,'bars-area',updateTempBars,tempRef);}
+function selectDisc(ri,key){selectWord(ri,key,discSel,'dw',DISC_COLORS,'disc-bars-area',updateDiscBars,discRef);}
+function selectCandTemp(ri,key){selectWord(ri,key,candTempSel,'ctw',COLORS,'cand-bars-temp',updateCandTempBars,ctempRef);}
+function selectCandDisc(ri,key){selectWord(ri,key,candDiscSel,'cdw',DISC_COLORS,'cand-bars-disc',updateCandDiscBars,cdiscRef);}
 
 function updateTempBars(){const sc=getScores(rowSel,TEMPS);TEMPS.forEach(t=>{const pct=Math.round((sc[t]/15)*100);const e=document.getElementById('pct-'+t);const b=document.getElementById('bar-'+t);const c=document.getElementById('cnt-'+t);if(e)e.textContent=pct+'%';if(b)b.style.width=pct+'%';if(c)c.textContent=sc[t];});}
 function updateDiscBars(){const sc=getScores(discSel,DISC_F);DISC_F.forEach(f=>{const pct=Math.round((sc[f]/15)*100);const e=document.getElementById('disc-pct-'+f);const b=document.getElementById('disc-bar-'+f);const c=document.getElementById('disc-cnt-'+f);if(e)e.textContent=pct+'%';if(b)b.style.width=pct+'%';if(c)c.textContent=sc[f];});}
@@ -929,6 +1000,19 @@ function getScores(sel,keys){const sc={};keys.forEach(k=>sc[k]=0);sel.forEach(k=
 function getDominant(sc,keys){return keys.slice().sort((a,b)=>sc[b]-sc[a])[0];}
 
 // ════════════════════════════════════════════════════════════════════════════
+// CARGO CHANGE — atualiza lista de líderes com filtro hierárquico
+// ════════════════════════════════════════════════════════════════════════════
+function onCargoChange(){
+  updateLiderSelect();
+  // Ajusta role automaticamente baseado no cargo
+  const cargo = document.getElementById('f-cargo').value;
+  if(CARGOS_LIDER.includes(cargo)){
+    const btn = document.getElementById('rbtn-lider');
+    if(btn && !btn.classList.contains('sel')) selRole(btn,'lider');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // ROLE / LIDER SELECT
 // ════════════════════════════════════════════════════════════════════════════
 function selRole(btn,role){
@@ -937,53 +1021,97 @@ function selRole(btn,role){
   selectedRole=role;
   updateLiderSelect();
 }
+
 function updateLiderSelect(excludeId){
   const sel=document.getElementById('f-lider');if(!sel)return;
+  const cargoPessoa = document.getElementById('f-cargo').value;
+  const nivelPessoa = HIER[cargoPessoa]||99;
   const prev=sel.value;
   sel.innerHTML='<option value="">— Topo da hierarquia (sem líder superior) —</option>';
-  // lideres do cadastro oficial
-  const cadastrados=lideresCad.filter(l=>l.id!==excludeId);
-  if(cadastrados.length){
+
+  // Filtra líderes cadastrados que têm nível hierárquico inferior (número menor = nível mais alto)
+  const cadFiltrados = lideresCad.filter(l=>{
+    if(l.id===excludeId)return false;
+    const nivelLider = HIER[l.cargo]||0;
+    // Superior deve ter nível menor (mais alto) que o da pessoa
+    return nivelLider < nivelPessoa;
+  });
+
+  if(cadFiltrados.length){
     const g=document.createElement('optgroup');g.label='🎯 Líderes cadastrados';
-    cadastrados.forEach(l=>{
+    cadFiltrados.forEach(l=>{
       const o=document.createElement('option');o.value='CAD-'+l.id;
-      o.textContent=l.nome+(l.cargo?' — '+l.cargo:'')+(l.area?' · '+l.area:'');
+      o.textContent=l.nome+' — '+l.cargo+(l.area?' · '+l.area:'');
       if(prev==='CAD-'+l.id)o.selected=true;
       g.appendChild(o);
     });
     sel.appendChild(g);
   }
-  // lideres que já fizeram diagnóstico
-  const diagLideres=participants.filter(p=>p.role==='lider'&&p.id!==excludeId);
+
+  // Líderes com diagnóstico completo
+  const diagLideres=participants.filter(p=>{
+    if(p.role!=='lider'||p.id===excludeId)return false;
+    const nivelLider=HIER[p.cargo]||0;
+    return nivelLider < nivelPessoa;
+  });
   if(diagLideres.length){
     const g=document.createElement('optgroup');g.label='✅ Líderes (diagnóstico completo)';
     diagLideres.forEach(l=>{
       const o=document.createElement('option');o.value=l.id;
-      o.textContent=l.nome+(l.cargo?' — '+l.cargo:'')+(l.area?' · '+l.area:'');
+      o.textContent=l.nome+' — '+l.cargo+(l.area?' · '+l.area:'');
       if(prev===l.id)o.selected=true;
       g.appendChild(o);
     });
     sel.appendChild(g);
   }
+
+  // Atualiza aviso de correlação automática
+  const liderVal = sel.value;
+  checkCorrAuto(liderVal);
+}
+
+function checkCorrAuto(liderVal){
+  const avisoEl = document.getElementById('corr-auto-aviso');
+  const okEl = document.getElementById('corr-auto-ok');
+  if(!avisoEl||!okEl)return;
+  if(!liderVal){avisoEl.style.display='none';okEl.style.display='none';return;}
+  // Verifica se o lider já tem diagnóstico
+  let temDiag = false;
+  if(liderVal.startsWith('CAD-')){
+    const cadId=liderVal.slice(4);
+    // Procura participant que seja lider e cujo nome coincide com o líder cadastrado
+    const cad=lideresCad.find(l=>l.id===cadId);
+    if(cad) temDiag=participants.some(p=>p.temperamento&&(p.id===cadId||p.liderDiretoId==='CAD-'+cadId&&false||nomeIgual(p.nome,cad.nome)));
+  } else {
+    temDiag=participants.some(p=>p.id===liderVal&&p.temperamento);
+  }
+  avisoEl.style.display=temDiag?'none':'block';
+  okEl.style.display=temDiag?'block':'none';
+}
+
+function nomeIgual(a,b){
+  return a&&b&&a.trim().toLowerCase()===b.trim().toLowerCase();
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// SAVE / LIMPAR
+// SAVE DIAGNÓSTICO — com correlação automática
 // ════════════════════════════════════════════════════════════════════════════
 function salvar(){
   const nome=document.getElementById('f-nome').value.trim();
   const cargo=document.getElementById('f-cargo').value;
   const area=document.getElementById('f-area').value;
   if(!nome){showAlertCad('Informe o nome.','info');return;}
+  if(!nomeValido(nome)){showAlertCad('Por favor, informe o primeiro e o último nome (ex: João Silva).','error');document.getElementById('f-nome').classList.add('input-error');return;}
   if(!cargo){showAlertCad('Selecione o cargo.','info');return;}
   if(!area){showAlertCad('Selecione a área.','info');return;}
   if(!selectedRole){showAlertCad('Selecione a função: Líder ou Staff/Colaborador.','info');return;}
   if(rowSel.filter(r=>r!==null).length<5){showAlertCad('Responda ao menos 5 linhas do Temperamento.','info');return;}
   if(discSel.filter(r=>r!==null).length<5){showAlertCad('Responda ao menos 5 linhas do DISC.','info');switchTab('disc');return;}
+
   const tsc=getScores(rowSel,TEMPS);
   const dsc=getScores(discSel,DISC_F);
   const liderVal=document.getElementById('f-lider').value||null;
-  // resolve líder nome/cargo para exibição
+
   let liderNome='',liderCargo='';
   if(liderVal){
     if(liderVal.startsWith('CAD-')){
@@ -994,8 +1122,10 @@ function salvar(){
       if(lp){liderNome=lp.nome;liderCargo=lp.cargo||'';}
     }
   }
+
+  const novoId=Date.now().toString();
   const p={
-    id:Date.now().toString(),nome,cargo,area,role:selectedRole,
+    id:novoId,nome,cargo,area,role:selectedRole,
     liderDiretoId:liderVal,liderNome,liderCargo,
     temperamento:getDominant(tsc,TEMPS),scores:tsc,rowSel:[...rowSel],
     disc:getDominant(dsc,DISC_F),discScores:dsc,discRowSel:[...discSel],
@@ -1006,13 +1136,22 @@ function salvar(){
     ts:new Date().toLocaleString('pt-BR'),
   };
   participants.push(p);
+
+  // ── CORRELAÇÃO AUTOMÁTICA ──────────────────────────────────────────────
+  // Se o novo é LÍDER: atualiza todos os liderados que apontavam para ele via nome (CAD sem diagnóstico)
+  // Se o novo é STAFF/LIDER com líder selecionado: vincula imediatamente
+  // Caso o líder tenha diagnóstico, a correlação já existe via liderDiretoId
+  // ──────────────────────────────────────────────────────────────────────
+
   saveData();
-  showAlertCad('✅ '+nome+' cadastrado com sucesso!','success');
+  showAlertCad(`✅ ${nome} cadastrado com sucesso! Diagnóstico e correlação registrados.`,'success');
   limpar();
 }
 
 function limpar(){
   ['f-nome','f-talento','f-caricatura','f-alergia','f-tarefa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const fn=document.getElementById('f-nome');if(fn)fn.classList.remove('input-error');
+  document.getElementById('f-nome-hint').style.display='none';
   document.getElementById('f-cargo').value='';document.getElementById('f-area').value='';
   selectedRole=null;
   document.querySelectorAll('#page-cadastro .role-btn').forEach(b=>b.classList.remove('sel'));
@@ -1021,6 +1160,8 @@ function limpar(){
   document.querySelectorAll('[id^="tw-"],[id^="dw-"]').forEach(b=>{b.style.background='white';b.style.color='var(--text)';b.style.borderColor='var(--border)';b.style.fontWeight='400';});
   document.getElementById('bars-area').style.display='none';
   document.getElementById('disc-bars-area').style.display='none';
+  document.getElementById('corr-auto-aviso').style.display='none';
+  document.getElementById('corr-auto-ok').style.display='none';
   updateTempBars();updateDiscBars();
   updateLiderSelect();
 }
@@ -1030,6 +1171,7 @@ async function salvarCandidato(){
   const cargo=document.getElementById('fc-cargo').value;
   const area=document.getElementById('fc-area').value;
   if(!nome){showAlertCandExt('Informe o nome.','info');return;}
+  if(!nomeValido(nome)){showAlertCandExt('Por favor, informe o primeiro e o último nome.','error');return;}
   if(!cargo){showAlertCandExt('Selecione o cargo pretendido.','info');return;}
   if(!area){showAlertCandExt('Selecione a área.','info');return;}
   if(candTempSel.filter(r=>r!==null).length<5){showAlertCandExt('Responda ao menos 5 linhas do Temperamento.','info');switchCandTab('temp');return;}
@@ -1052,20 +1194,32 @@ async function salvarCandidato(){
 // ════════════════════════════════════════════════════════════════════════════
 // ALERTS
 // ════════════════════════════════════════════════════════════════════════════
-function showAlert(elId,msg,type){const el=document.getElementById(elId);if(!el)return;el.className='alert alert-'+type+' show';el.textContent=msg;setTimeout(()=>el.classList.remove('show'),4500);}
+function showAlert(elId,msg,type){const el=document.getElementById(elId);if(!el)return;el.className='alert alert-'+type+' show';el.textContent=msg;setTimeout(()=>el.classList.remove('show'),5000);}
 function showAlertCad(m,t){showAlert('alerta-cad',m,t);}
 function showAlertCandExt(m,t){showAlert('alerta-cand-ext',m,t);}
 
 // ════════════════════════════════════════════════════════════════════════════
 // LÍDERES CRUD
 // ════════════════════════════════════════════════════════════════════════════
-function updateSuperiorSelect(excludeId){
+function updateSuperiorSelectByHier(){
+  // Quando cargo muda no form de líder, atualiza o select de superior
+  const cargo = document.getElementById('fl-cargo').value;
+  updateSuperiorSelect(document.getElementById('fl-edit-id').value||null, cargo);
+}
+
+function updateSuperiorSelect(excludeId, cargoPessoa){
   const sel=document.getElementById('fl-superior');if(!sel)return;
   const prev=sel.value;
+  cargoPessoa = cargoPessoa || document.getElementById('fl-cargo').value;
+  const nivelPessoa = HIER[cargoPessoa]||99;
   sel.innerHTML='<option value="">— Topo da hierarquia —</option>';
-  lideresCad.filter(l=>l.id!==excludeId).forEach(l=>{
+  lideresCad.filter(l=>{
+    if(l.id===excludeId)return false;
+    const nivelLider=HIER[l.cargo]||0;
+    return nivelLider < nivelPessoa;
+  }).forEach(l=>{
     const o=document.createElement('option');o.value=l.id;
-    o.textContent=l.nome+(l.cargo?' — '+l.cargo:'');
+    o.textContent=l.nome+' — '+l.cargo;
     if(prev===l.id)o.selected=true;
     sel.appendChild(o);
   });
@@ -1078,6 +1232,7 @@ function salvarLider(){
   const superiorId=document.getElementById('fl-superior').value||null;
   const editId=document.getElementById('fl-edit-id').value;
   if(!nome){showAlert('alerta-lid','Informe o nome do líder.','info');return;}
+  if(!nomeValido(nome)){showAlert('alerta-lid','Informe o primeiro e o último nome (ex: Ana Souza).','error');return;}
   if(!cargo){showAlert('alerta-lid','Selecione o cargo.','info');return;}
   if(!area){showAlert('alerta-lid','Selecione a área.','info');return;}
   if(editId){
@@ -1085,8 +1240,9 @@ function salvarLider(){
     if(idx>-1){lideresCad[idx]={...lideresCad[idx],nome,cargo,area,superiorId};}
     showAlert('alerta-lid','✅ Líder atualizado com sucesso!','success');
   } else {
-    lideresCad.push({id:'LID'+Date.now(),nome,cargo,area,superiorId});
-    showAlert('alerta-lid','✅ Líder cadastrado com sucesso!','success');
+    const newId='LID'+Date.now();
+    lideresCad.push({id:newId,nome,cargo,area,superiorId});
+    showAlert('alerta-lid','✅ Líder cadastrado! Agora ele pode fazer o diagnóstico e será vinculado automaticamente.','success');
   }
   saveData();
   cancelarEdicaoLider();
@@ -1109,15 +1265,15 @@ function editarLider(id){
   document.getElementById('fl-cargo').value=l.cargo||'';
   populateAreaSelect('fl-area', l.area||'');
   document.getElementById('fl-edit-id').value=l.id;
-  document.getElementById('form-lider-titulo').textContent='✏️ Editar Líder: '+l.nome;
-  updateSuperiorSelect(l.id);
+  document.getElementById('form-lider-titulo').textContent='✏️ Editar: '+l.nome;
+  updateSuperiorSelect(l.id, l.cargo);
   document.getElementById('fl-superior').value=l.superiorId||'';
   document.getElementById('form-lider-card').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function excluirLider(id){
   const l=lideresCad.find(x=>x.id===id);
-  if(!confirm(`Excluir "${l?.nome}"? Diagnósticos vinculados não serão removidos.`))return;
+  if(!confirm(`Excluir "${l?.nome}"? Os diagnósticos vinculados não serão removidos.`))return;
   lideresCad=lideresCad.filter(x=>x.id!==id);
   saveData();renderListaLideres();updateSuperiorSelect();
   showAlert('alerta-lid','Líder removido.','info');
@@ -1129,62 +1285,62 @@ function renderListaLideres(){
     wrap.innerHTML='<div class="empty"><div class="empty-icon">👥</div><p>Nenhum líder cadastrado ainda.<br>Use o formulário acima para adicionar o primeiro líder.</p></div>';
     return;
   }
-  // find superior name
-  const supNome=id=>id?(lideresCad.find(l=>l.id===id)?.nome||'—'):'—';
-  // check if has diagnostic
-  const temDiag=id=>participants.some(p=>p.role==='lider'&&(p.liderDiretoId==='CAD-'+id||p.nome===lideresCad.find(l=>l.id===id)?.nome));
+  const supNome=id=>id?(lideresCad.find(l=>l.id===id)?.nome||'—'):'— Topo';
+
+  // Verifica se líder tem diagnóstico: busca participant cujo nome coincide OU cujo id é o líder cadastrado
+  const getDiagLider = (l) => {
+    return participants.find(p =>
+      p.temperamento &&
+      (nomeIgual(p.nome, l.nome) || p.id === l.id)
+    ) || null;
+  };
+
+  const NIVEL_COR = {1:'#1A3A5C',2:'#C0392B',3:'#E67E22',4:'#B8960C',5:'#27AE60'};
+
   wrap.innerHTML=`<table class="tbl"><thead><tr>
-    <th>Nome</th><th>Cargo</th><th>Área</th><th>Superior</th><th>Diagnóstico</th><th>Ações</th>
+    <th>Nome</th><th>Cargo</th><th>Área</th><th>Superior</th><th>Diagnóstico</th><th>Temperamento</th><th>Ações</th>
   </tr></thead><tbody>`+
-  lideresCad.map(l=>`<tr>
-    <td><strong>${l.nome}</strong></td>
-    <td style="font-size:.82rem">${l.cargo||'—'}</td>
-    <td style="font-size:.82rem">${l.area||'—'}</td>
-    <td style="font-size:.82rem;color:var(--muted)">${supNome(l.superiorId)}</td>
-    <td>${participants.find(p=>p.liderDiretoId==='CAD-'+l.id||p.id===l.id)
-      ?'<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#EAF7F0;color:#1A5C35;font-weight:700">✅ Completo</span>'
-      :'<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#FEF3E8;color:#7B3D00;font-weight:700">⏳ Pendente</span>'
-    }</td>
-    <td style="display:flex;gap:6px;flex-wrap:wrap">
-      <button onclick="editarLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.73rem;font-family:inherit">✏️ Editar</button>
-      <button onclick="excluirLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.73rem;font-family:inherit">✕ Excluir</button>
-    </td>
-  </tr>`).join('')+'</tbody></table>';
+  lideresCad.map(l=>{
+    const diag = getDiagLider(l);
+    const nivel = HIER[l.cargo]||0;
+    const corNivel = NIVEL_COR[nivel]||'#888';
+    const diagBadge = diag
+      ? `<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#EAF7F0;color:#1A5C35;font-weight:700">✅ Completo</span>`
+      : `<span style="font-size:.72rem;padding:2px 8px;border-radius:6px;background:#FEF3E8;color:#7B3D00;font-weight:700">⏳ Pendente</span>`;
+    const tempBadgeHTML = diag && diag.temperamento
+      ? `<span class="badge ${diag.temperamento}" style="font-size:.7rem">${LABELS[diag.temperamento]}</span>${diag.disc?`<br><span style="font-size:.68rem;padding:2px 6px;border-radius:5px;background:${DISC_COLORS[diag.disc]}18;color:${DISC_COLORS[diag.disc]};font-weight:700;display:inline-block;margin-top:2px">${diag.disc}</span>`:''}`
+      : '<span style="color:var(--muted);font-size:.75rem">—</span>';
+    return`<tr>
+      <td><strong>${l.nome}</strong></td>
+      <td><span style="font-size:.72rem;padding:2px 8px;border-radius:5px;background:${corNivel}18;color:${corNivel};font-weight:700">N${nivel}</span> <span style="font-size:.82rem">${l.cargo||'—'}</span></td>
+      <td style="font-size:.82rem">${l.area||'—'}</td>
+      <td style="font-size:.82rem;color:var(--muted)">${supNome(l.superiorId)}</td>
+      <td>${diagBadge}</td>
+      <td>${tempBadgeHTML}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="editarLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.73rem;font-family:inherit">✏️ Editar</button>
+        <button onclick="excluirLider('${l.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.73rem;font-family:inherit">✕ Excluir</button>
+      </td>
+    </tr>`;
+  }).join('')+'</tbody></table>';
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// MAPA MENTAL
+// HELPERS: resolver líder
 // ════════════════════════════════════════════════════════════════════════════
-function renderMapa(){
-  const wrap=document.getElementById('mapa-wrap');if(!wrap)return;
-  // Líderes = aqueles com diagnóstico completo (role==='lider')
-  const lideres=participants.filter(p=>p.role==='lider'&&p.temperamento);
-  // Também líderes cadastrados que ainda não fizeram diagnóstico
-  const lideresNoDiag=lideresCad.filter(l=>!lideres.some(p=>p.liderDiretoId==='CAD-'+l.id||p.nome===l.nome));
-  if(!lideres.length&&!lideresNoDiag.length){
-    wrap.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><p>Nenhum líder com diagnóstico ainda.<br>Complete o diagnóstico de pelo menos um líder na aba <strong>Diagnóstico</strong>.</p></div>`;
-    return;
-  }
-  // Show líderes without diag as grayed stubs
-  const stubsHtml=lideresNoDiag.map(l=>`
-    <div class="mapa-bloco"><div class="card" style="opacity:.55">
-      <div style="display:flex;justify-content:center">
-        <div class="mapa-lider-node" style="background:#888;cursor:default">
-          <div class="mn-nome">${l.nome}</div>
-          <div class="mn-cargo">${l.cargo||''} ${l.area?'· '+l.area:''}</div>
-          <div style="font-size:.68rem;opacity:.7;margin-top:6px">⏳ Diagnóstico pendente</div>
-        </div>
-      </div>
-    </div></div>`).join('');
-  wrap.innerHTML=lideres.map(l=>buildMapaBloco(l)).join('')+stubsHtml;
-}
-
-// Resolve lider vinculado a um participante (pode ser CAD-id ou id de participant)
 function resolverLider(p){
   if(!p.liderDiretoId)return null;
   if(p.liderDiretoId.startsWith('CAD-')){
     const cadId=p.liderDiretoId.slice(4);
-    return lideresCad.find(l=>l.id===cadId)||null;
+    // Primeiro tenta achar participant com diagnóstico que seja esse líder cadastrado
+    const cadObj = lideresCad.find(l=>l.id===cadId);
+    if(cadObj){
+      // Tenta achar participant com mesmo nome
+      const diagLider = participants.find(pp=>pp.temperamento&&nomeIgual(pp.nome,cadObj.nome));
+      if(diagLider) return diagLider;
+      return cadObj;
+    }
+    return null;
   }
   return participants.find(x=>x.id===p.liderDiretoId)||null;
 }
@@ -1192,28 +1348,61 @@ function resolverLider(p){
 function tempBadge(t){if(!t)return'';return`<span class="mn-badge" style="background:${COLORS[t]}28;color:${COLORS[t]}">${LABELS[t]}</span>`;}
 function discBadge(d){if(!d)return'';return`<span class="mn-badge" style="background:${DISC_COLORS[d]}28;color:${DISC_COLORS[d]}">${d} — ${DISC_LABELS[d]}</span>`;}
 
+// ════════════════════════════════════════════════════════════════════════════
+// MAPA MENTAL — com hierarquia
+// ════════════════════════════════════════════════════════════════════════════
+function renderMapa(){
+  const wrap=document.getElementById('mapa-wrap');if(!wrap)return;
+  const lideres=participants.filter(p=>p.role==='lider'&&p.temperamento);
+  const lideresNoDiag=lideresCad.filter(l=>!participants.some(p=>p.temperamento&&nomeIgual(p.nome,l.nome)));
+
+  if(!lideres.length&&!lideresNoDiag.length){
+    wrap.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><p>Nenhum líder com diagnóstico ainda.<br>Complete o diagnóstico de pelo menos um líder na aba <strong>Diagnóstico</strong>.</p></div>`;
+    return;
+  }
+
+  // Ordena líderes por nível hierárquico (mais alto primeiro)
+  const lideresOrdenados = [...lideres].sort((a,b)=>(HIER[a.cargo]||9)-(HIER[b.cargo]||9));
+
+  const stubsHtml=lideresNoDiag.map(l=>`
+    <div class="mapa-bloco"><div class="card" style="opacity:.55">
+      <div style="display:flex;justify-content:center">
+        <div class="mapa-lider-node" style="background:#888;cursor:default">
+          <div class="mn-nome">${l.nome}</div>
+          <div class="mn-cargo">${l.cargo||''} ${l.area?'· '+l.area:''}</div>
+          <div style="font-size:.68rem;opacity:.7;margin-top:6px">⏳ Aguardando diagnóstico</div>
+        </div>
+      </div>
+    </div></div>`).join('');
+  wrap.innerHTML=lideresOrdenados.map(l=>buildMapaBloco(l)).join('')+stubsHtml;
+}
+
 function buildMapaBloco(lider){
-  // liderados = anyone (staff or lider) whose liderDiretoId points to this lider
   const liderados=participants.filter(p=>
-    p.liderDiretoId===lider.id || p.liderDiretoId==='CAD-'+lider.id
+    p.liderDiretoId===lider.id || p.liderDiretoId===('CAD-'+(lideresCad.find(l=>nomeIgual(l.nome,lider.nome))?.id||'__'))
   );
-  // Superior do líder
   const superior=resolverLider(lider);
+  const nivelLider = HIER[lider.cargo]||0;
+  const corNivel = {1:'#1A3A5C',2:'#C0392B',3:'#E67E22',4:'#B8960C',5:'#27AE60'}[nivelLider]||'var(--text)';
+
   const superiorHtml=superior
-    ?`<div style="text-align:center;margin-bottom:8px;font-size:.72rem;color:#B0A890">↑ Superior: <strong>${superior.nome||superior.nome}</strong>${superior.cargo?' · '+superior.cargo:''}</div>`
-    :'';
+    ?`<div style="text-align:center;margin-bottom:8px;font-size:.72rem;color:#B0A890">↑ Superior: <strong>${superior.nome}</strong>${superior.cargo?' · '+superior.cargo:''}</div>`
+    :`<div style="text-align:center;margin-bottom:8px;font-size:.72rem;color:#27AE60;font-weight:700">🌟 Topo da hierarquia</div>`;
+
   const lideradosHtml=liderados.length===0
-    ?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">Nenhum colaborador/liderado vinculado ainda</div>`
+    ?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">Nenhum colaborador vinculado ainda</div>`
     :`<div class="mapa-liderados-row">${liderados.map(l=>buildLideradoCol(l,lider.id)).join('')}</div>`;
+
   return`<div class="mapa-bloco">
     <div class="card" style="overflow:visible">
       ${superiorHtml}
       <div style="display:flex;justify-content:center">
-        <div class="mapa-lider-node" id="mlider-${lider.id}" onclick="toggleLiderDetalhe('${lider.id}')" style="cursor:pointer">
+        <div class="mapa-lider-node" id="mlider-${lider.id}" onclick="toggleLiderDetalhe('${lider.id}')" style="cursor:pointer;background:${corNivel}">
+          <div style="font-size:.62rem;opacity:.7;margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase">N${nivelLider} · ${lider.cargo||''}</div>
           <div class="mn-nome">${lider.nome}</div>
-          <div class="mn-cargo">${lider.cargo||''} ${lider.area?'· '+lider.area:''}</div>
+          <div class="mn-cargo">${lider.area||''}</div>
           <div class="mn-badges">${tempBadge(lider.temperamento)}${discBadge(lider.disc)}</div>
-          <div style="font-size:.68rem;opacity:.6;margin-top:5px">Clique para ver perfil completo</div>
+          <div style="font-size:.68rem;opacity:.55;margin-top:5px">Clique para ver perfil</div>
         </div>
       </div>
       <div id="lider-detalhe-${lider.id}" style="display:none;margin:16px auto;max-width:600px">${buildPerfilCompleto(lider,null)}</div>
@@ -1241,7 +1430,6 @@ function buildLideradoCol(lid,liderId){
 function toggleLiderDetalhe(liderId){
   const el=document.getElementById('lider-detalhe-'+liderId);
   const isOpen=el.style.display!=='none';
-  // close all lider detalhes
   document.querySelectorAll('[id^="lider-detalhe-"]').forEach(e=>e.style.display='none');
   if(!isOpen)el.style.display='block';
 }
@@ -1250,7 +1438,6 @@ function toggleLideradoDetalhe(lidId,liderId){
   const panel=document.getElementById('mdet-'+lidId);
   const node=document.getElementById('mnode-'+lidId);
   const isOpen=panel.style.display!=='none';
-  // close all
   document.querySelectorAll('[id^="mdet-"]').forEach(p=>{p.style.display='none';p.innerHTML='';});
   document.querySelectorAll('.mapa-node').forEach(n=>n.classList.remove('open'));
   if(isOpen)return;
@@ -1320,27 +1507,29 @@ function renderPainel(){
   document.getElementById('legend').innerHTML=TEMPS.map(t=>`<div class="legend-item"><div class="ldot" style="background:${COLORS[t]}"></div><span style="width:90px">${LABELS[t]}</span><div class="lbar-track"><div class="lbar-fill" style="background:${COLORS[t]};width:${Math.round((counts[t]/tot)*100)}%"></div></div><span class="lcount">${counts[t]}</span><span style="font-size:.73rem;color:var(--muted);min-width:30px">${Math.round((counts[t]/tot)*100)}%</span></div>`).join('');
   const tw=document.getElementById('table-wrap');
   if(all.length===0){tw.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Nenhum participante ainda.</p></div>';return;}
-  tw.innerHTML=`<table class="tbl"><thead><tr><th>Nome</th><th>Função</th><th>Temperamento / DISC</th><th>Líder Direto</th><th>Talento</th><th>Ações</th></tr></thead><tbody>`+
+  tw.innerHTML=`<table class="tbl"><thead><tr><th>Nome</th><th>Função</th><th>Cargo / Nível</th><th>Temperamento / DISC</th><th>Líder Direto</th><th>Ações</th></tr></thead><tbody>`+
   all.map(p=>{
     const lider=resolverLider(p);
-    const liderText=lider?(lider.nome||lider.nome)+(lider.cargo?' · '+lider.cargo:''):'<em style="color:var(--muted)">Topo hierarquia</em>';
+    const liderText=lider?(lider.nome+(lider.cargo?' · '+lider.cargo:'')):'<em style="color:var(--muted)">Topo hierarquia</em>';
     const roleLabel=p.role==='lider'?'🎯 Líder':'🌱 Staff/Colab.';
-    return`<tr><td><strong>${p.nome}</strong><br><span style="font-size:.7rem;color:var(--muted)">${p.cargo||''} · ${p.area||''}</span></td>
+    const nivel=HIER[p.cargo]||0;
+    return`<tr><td><strong>${p.nome}</strong><br><span style="font-size:.7rem;color:var(--muted)">${p.area||''}</span></td>
       <td>${roleLabel}</td>
+      <td><span style="font-size:.72rem;padding:2px 7px;border-radius:5px;background:#1A3A5C18;color:#1A3A5C;font-weight:700">${nivel?'N'+nivel:''}</span> <span style="font-size:.82rem">${p.cargo||'—'}</span></td>
       <td><span class="badge ${p.temperamento}">${LABELS[p.temperamento]||'—'}</span>${p.disc?`<br><span style="font-size:.7rem;padding:2px 7px;border-radius:6px;background:${DISC_COLORS[p.disc]}18;color:${DISC_COLORS[p.disc]};font-weight:700;margin-top:2px;display:inline-block">${p.disc} — ${DISC_LABELS[p.disc]}</span>`:''}</td>
       <td style="font-size:.82rem">${liderText}</td>
-      <td style="font-size:.76rem;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.talento||'—'}</td>
       <td><button onclick="abrirModal('${p.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;cursor:pointer;font-size:.73rem;font-family:inherit;margin-right:4px">Ver</button><button onclick="remover('${p.id}')" style="padding:4px 10px;border-radius:5px;border:1px solid #fcc;background:#FFF0F0;color:var(--colerico);cursor:pointer;font-size:.73rem;font-family:inherit">✕</button></td>
     </tr>`;
   }).join('')+'</tbody></table>';
-  // CORRELAÇÕES — pares onde um tem líder direto com diagnóstico completo
+
+  // CORRELAÇÕES — busca todos os pares onde o liderado tem líder com diagnóstico
   const corrWrap=document.getElementById('corr-wrap');
   const pares=[];
   all.forEach(p=>{
-    const lider=p.liderDiretoId?participants.find(l=>l.role==='lider'&&(l.id===p.liderDiretoId)):null;
-    if(lider&&lider.temperamento&&p.temperamento)pares.push({lider,lid:p});
+    const lider=resolverLider(p);
+    if(lider&&lider.temperamento&&p.temperamento&&lider.id!==p.id)pares.push({lider,lid:p});
   });
-  if(!pares.length){corrWrap.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted)">Nenhuma correlação disponível ainda.</div>';return;}
+  if(!pares.length){corrWrap.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted)">Nenhuma correlação disponível ainda. Complete diagnósticos de líderes e liderados.</div>';return;}
   corrWrap.innerHTML=pares.map(({lider,lid},i)=>{
     const k1=lider.temperamento+'-'+lid.temperamento;const k2=lid.temperamento+'-'+lider.temperamento;
     const corr=CORR[k1]||CORR[k2]||{tipo:'—',cor:'#888',titulo:'—',desc:'—'};
@@ -1352,7 +1541,8 @@ function renderPainel(){
       </div>
       <div class="corr-card-body" id="corr-body-${i}">
         <p style="font-size:.8rem;color:#555;margin-bottom:10px;line-height:1.5"><strong>${corr.titulo}:</strong> ${corr.desc}</p>
-        ${acao?[['💬','Feedback',acao.feedback,'#FFF8E7'],['🗣️','Comunicação',acao.comunicacao,'#F0F4FF'],['📈','Desenvolver',acao.desenvolver,'#EEF9FF'],['🔥','Motivar',acao.motivar,'#FFF0FA'],['⚡','Habilidades',acao.habilidades,'#EDFBF1'],['🎯','Encaixe',acao.encaixe,'#FEF9E7'],['🚀','Potencial',acao.potencial,'#F5F0FF']].map(([ic,lb,tx,bg])=>`<div style="background:${bg};border-radius:6px;padding:8px 10px;margin-bottom:6px"><div style="font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-bottom:2px">${ic} ${lb}</div><div style="font-size:.77rem;color:#333;line-height:1.5">${tx||'—'}</div></div>`).join(''):''}
+        ${acao?[['💬','Feedback',acao.feedback,'#FFF8E7'],['🗣️','Comunicação',acao.comunicacao,'#F0F4FF'],['📈','Desenvolver',acao.desenvolver,'#EEF9FF'],['🔥','Motivar',acao.motivar,'#FFF0FA'],['⚡','Habilidades',acao.habilidades,'#EDFBF1'],['🎯','Encaixe',acao.encaixe,'#FEF9E7'],['🚀','Potencial',acao.potencial,'#F5F0FF']].map(([ic,lb,tx,bg])=>`<div style="background:${bg};border-radius:6px;padding:8px 10px;margin-bottom:6px"><div style="font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-bottom:2px">${ic} ${lb}</div><div style="font-size:.77rem;color:#333;line-height:1.5">${tx||'—'}</div></div>`).join(''):''
+        }
       </div>
     </div>`;
   }).join('');
@@ -1360,22 +1550,22 @@ function renderPainel(){
 function toggleCorr(i){const b=document.getElementById('corr-body-'+i);b.classList.toggle('open');}
 
 // ════════════════════════════════════════════════════════════════════════════
-// MODAL DETALHE
+// MODAL
 // ════════════════════════════════════════════════════════════════════════════
 function abrirModal(id){
   const p=participants.find(x=>x.id===id);if(!p)return;
-  const liderParticipant=p.liderDiretoId&&!p.liderDiretoId.startsWith('CAD-')
-    ?participants.find(x=>x.id===p.liderDiretoId):null;
+  const liderResolvido=resolverLider(p);
+  const liderParticipant=liderResolvido&&liderResolvido.temperamento?liderResolvido:null;
   document.getElementById('m-nome').textContent=p.nome;
   const roleLabel=p.role==='lider'?'🎯 Líder':'🌱 Staff/Colaborador';
   document.getElementById('m-meta').textContent=`${roleLabel} · ${p.cargo||''} · ${p.area||''} · ${p.ts||''}`;
-  document.getElementById('m-body').innerHTML=liderParticipant&&liderParticipant.temperamento
+  document.getElementById('m-body').innerHTML=liderParticipant
     ?buildPerfilComCorrelacao(p,liderParticipant)
     :buildPerfilCompleto(p,null);
   document.getElementById('modal-bg').classList.add('open');
 }
 function fecharModal(){document.getElementById('modal-bg').classList.remove('open');}
-function remover(id){if(!confirm('Remover este participante?'))return;participants=participants.filter(p=>p.id!==id);saveData();renderPainel();}
+function remover(id){if(!confirm('Remover este participante? Esta ação não pode ser desfeita.'))return;participants=participants.filter(p=>p.id!==id);saveData();renderPainel();}
 
 // ════════════════════════════════════════════════════════════════════════════
 // SELEÇÃO CANDIDATOS
@@ -1415,12 +1605,17 @@ async function init(){
     await loadData();
     return;
   }
-  // App abre normalmente sem senha
   await loadData();
   buildTables();
   populateAllAreas();
   renderAll();
 }
+
+// Monitora mudança no select de líder no diagnóstico
+document.addEventListener('DOMContentLoaded',()=>{
+  const selLider=document.getElementById('f-lider');
+  if(selLider)selLider.addEventListener('change',()=>checkCorrAuto(selLider.value));
+});
 
 init();
 </script>
